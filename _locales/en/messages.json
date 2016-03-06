@@ -1,0 +1,11 @@
+{
+	"extName": {
+		"message": "HTML5 Video Keyboard Shortcuts",
+		"description": "Extention name"
+	},
+	
+	"shrtExtName": {
+		"message": "Video Keys",
+		"description": "Short extension name"
+	}
+}
