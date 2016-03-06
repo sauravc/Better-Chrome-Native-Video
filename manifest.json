@@ -4,7 +4,7 @@
 	"name": "__MSG_extName__",
 	"short_name": "__MSG_shrtExtName__",
 	"default_locale": "en",
-	"description": "Add keyboard support to Chrome's native HTML5 video player.",
+	"description": "__MSG_extDesc__",
 	"version": "1.0",
 	
 	"icons": {
