@@ -7,5 +7,10 @@
 	"shrtExtName": {
 		"message": "Video Keys",
 		"description": "Short extension name"
+	},
+	
+	"extDesc": {
+		"message": "Add keyboard support to Chrome's native HTML5 video player.",
+		"description": "Extension description"
 	}
 }
