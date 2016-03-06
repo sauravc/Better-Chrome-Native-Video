@@ -7,35 +7,21 @@ Note that this extension is only meant to affect Chrome's native HTML5 video pla
 
 FULL LIST OF SHORTCUTS:
 
-* Click:
-    Select video, Play/Pause selected video
-* Space / K:
-    Play/Pause
-* Left Arrow / J:
-    Skip back 5 seconds (10 holding shift)
-* Right Arrow / L:
-    Skip forward 5 seconds (10 holding shift)
-* Comma (,):
-    Skip back 1/60th of a second
-* Period (.):
-    Skip forward 1/60th of a second
-* Home / 0:
-    Skip to beginning
-* End:
-    Skip to end
-* 1 - 9:
-    Skip to X% (10%, 20%, 30%, ... 90%)
-* Up Arrow:
-    Increase volume
-* Down Arrow:
-    Decrease volume
-* M:
-    Toggle mute
-* Less Than (<):
-    Slow down video playback
-* Greater Than (>):
-    Speed up video playback
-* Question Mark (?):
-    Return to default playback speed
-* F:
-    Toggle fullscreen
+| Keys              | Effects                                   |
+| ----------------- | ----------------------------------------- |
+| Click             | Select video, Play/Pause selected video   |
+| Space / K         | Play/Pause                                |
+| Left Arrow / J    | Skip back 5 seconds (10 holding shift)    |
+| Right Arrow / L   | Skip forward 5 seconds (10 holding shift) |
+| Comma (,)         | Skip back 1/60th of a second              |
+| Period (.)        | Skip forward 1/60th of a second           |
+| Home / 0          | Skip to beginning                         |
+| End               | Skip to end                               |
+| 1 - 9             | Skip to X% (10%, 20%, 30%, ... 90%)       |
+| Up Arrow          | Increase volume                           |
+| Down Arrow        | Decrease volume                           |
+| M                 | Toggle mute                               |
+| Less Than (<)     | Slow down video playback                  |
+| Greater Than (>)  | Speed up video playback                   |
+| Question Mark (?) | Return to default playback speed          |
+| F                 | Toggle fullscreen                         |
