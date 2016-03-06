@@ -6,7 +6,7 @@ This extension adds an extensive list of keyboard controls to improve your viewi
 
 Note that this extension is only meant to affect Chrome's native HTML5 video player!
 
-FULL LIST OF SHORTCUTS:
+#### FULL LIST OF SHORTCUTS:
 
 | Keys              | Effects                                   |
 | ----------------- | ----------------------------------------- |
