@@ -101,10 +101,13 @@ function unregisterVideo(v){
 
 function directHandleClick(){
 	let v = this.firstElementChild;
-	if(v.paused)
-		v.play();
-	else
-		v.pause();
+	let cvccr = new ChromeVideoControlClientRect(v);
+	if(!cvccr.containsEvent(e)){ // If clicked on controls, do nothing
+		if(v.paused)
+			v.play();
+		else
+			v.pause();
+	}
 }
 
 function directHandleKey(e){
@@ -112,7 +115,10 @@ function directHandleKey(e){
 }
 
 function handleClick(e){
-	if(document.activeElement === this){
+	let cvccr = new ChromeVideoControlClientRect(this);
+	if(cvccr.containsEvent(e)){ // If clicked on controls, only focus
+		this.focus();
+	}else if(document.activeElement === this){
 		if(this.paused)
 			this.play();
 		else
@@ -194,6 +200,28 @@ function handleKey(e, v){
 	}
 	e.preventDefault();
 }
+
+// Kinda hacky, but only way.
+// Detects if click was on controls by directly calculating their position, checking bounds.
+// Necessary for forward compatibility.
+function ChromeVideoControlClientRect(v){
+	let rect = v.getBoundingClientRect();
+	this.width = rect.width >= 800 ? 790 : rect.width - 10;
+	this.left = rect.left + (rect.width - this.width) / 2;
+	this.right = this.left + this.width;
+	this.height = 30;
+	this.bottom = rect.bottom - 5;
+	this.top = this.bottom - this.height;
+}
+ChromeVideoControlClientRect.prototype.containsEvent = function(e){
+	return this.containsClientCoords(e.clientX,e.clientY);
+};
+ChromeVideoControlClientRect.prototype.containsClientCoords = function(clientX,clientY){
+	return clientX >= this.left
+		&& clientX <= this.right
+		&& clientY >= this.top
+		&& clientY <= this.bottom;
+};
 
 if(document.readyState !== "loading")
 	processAllVideos();
