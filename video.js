@@ -99,7 +99,7 @@ function unregisterVideo(v){
 	v.removeEventListener("keydown", handleKey);
 }
 
-function directHandleClick(){
+function directHandleClick(e){
 	let v = this.firstElementChild;
 	let cvccr = new ChromeVideoControlClientRect(v);
 	if(!cvccr.containsEvent(e)){ // If clicked on controls, do nothing
