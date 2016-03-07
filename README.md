@@ -2,6 +2,8 @@
 
 Add keyboard support to Chrome's native HTML5 video player.
 
+https://chrome.google.com/webstore/detail/html5-video-keyboard-shor/llhmaciggnibnbdokidmbilklceaobae?hl=en-US&gl=US
+
 This extension adds an extensive list of keyboard controls to improve your viewing experience. The shortcuts are only active on videos with the default controls enabled, so don't worry about them messing up YouTube or other advanced video players. To enable controls (and keyboard shortcuts) on videos that don't have them, just right-click the video in question and select "Show controls".
 
 Note that this extension is only meant to affect Chrome's native HTML5 video player!
