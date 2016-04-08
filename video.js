@@ -72,13 +72,13 @@ function registerDirectVideo(){
 		unregisterVideo(vids[i]);
 	}
 	document.body.firstElementChild.classList.add(directVideoClass);
-	document.body.addEventListener("click", directHandleClick);
-	document.body.addEventListener("keydown", directHandleKey);
+	document.addEventListener("click", directHandleClick);
+	document.addEventListener("keydown", directHandleKey);
 }
 
 function unregisterDirectVideo(){
-	document.body.removeEventListener("click", directHandleClick);
-	document.body.removeEventListener("keydown", directHandleKey);
+	document.removeEventListener("click", directHandleClick);
+	document.removeEventListener("keydown", directHandleKey);
 	let vids = document.getElementsByClassName(directVideoClass);
 	for(let i = 0; i < vids.length; ++i){
 		registerVideo(vids[i]);
@@ -100,7 +100,7 @@ function unregisterVideo(v){
 }
 
 function directHandleClick(e){
-	let v = this.firstElementChild;
+	let v = this.body.firstElementChild;
 	if(v.paused)
 		v.play();
 	else
