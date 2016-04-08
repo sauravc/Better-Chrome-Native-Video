@@ -91,12 +91,14 @@ function registerVideo(v){
 	v.classList.add(videoClass);
 	v.addEventListener("click", handleClick);
 	v.addEventListener("keydown", handleKey);
+	v.addEventListener("webkitfullscreenchange", handleFullscreen);
 }
 
 function unregisterVideo(v){
 	v.classList.remove(videoClass);
 	v.removeEventListener("click", handleClick);
 	v.removeEventListener("keydown", handleKey);
+	v.removeEventListener("webkitfullscreenchange", handleFullscreen);
 }
 
 function directHandleClick(e){
@@ -193,6 +195,11 @@ function handleKey(e, v){
 			return; // Do not prevent default if no UI activated
 	}
 	e.preventDefault();
+}
+
+function handleFullscreen(){
+	if(document.webkitFullscreenElement===this)
+		this.focus()
 }
 
 if(document.readyState !== "loading")
