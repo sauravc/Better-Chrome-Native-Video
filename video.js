@@ -108,7 +108,7 @@ function directHandleClick(e){
 }
 
 function directHandleKey(e){
-	handleKey(e, this.firstElementChild);
+	handleKey(e, this.body.firstElementChild);
 }
 
 function handleClick(e){
