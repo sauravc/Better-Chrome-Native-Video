@@ -159,9 +159,11 @@ function handleKey(e, v){
 		break;
 	case 38: // Up arrow
 		if(v.volume <= 0.9) v.volume += 0.1;
+		else v.volume = 1;
 		break;
 	case 40: // Down arrow
 		if(v.volume >= 0.1) v.volume -= 0.1;
+		else v.volume = 0;
 		break;
 	case 70: // F
 		if(document.webkitFullscreenElement)
