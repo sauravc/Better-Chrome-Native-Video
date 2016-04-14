@@ -165,15 +165,19 @@ function handleKey(e, v){
 		if(v.volume >= 0.1) v.volume -= 0.1;
 		else v.volume = 0;
 		break;
+	case 77: // M
+		v.muted = !v.muted;
+		break;
 	case 70: // F
 		if(document.webkitFullscreenElement)
 			document.webkitExitFullscreen();
 		else
 			v.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
 		break;
-	case 77: // M
-		v.muted = !v.muted;
-		break;
+	case 82: // R
+		let currTime = v.currentTime;
+		v.load();
+		v.currentTime = currTime;
 	case 188: // Comma or Less-Than
 		if(e.shiftKey) // Less-Than
 			v.playbackRate -= 0.25;
