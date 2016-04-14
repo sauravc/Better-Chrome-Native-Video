@@ -1,7 +1,7 @@
 "use strict";
 
-let videoClass = "chrome-better-HTML5-video";
-let directVideoClass = "DIRECT-chrome-better-HTML5-video";
+const videoClass = "chrome-better-HTML5-video";
+const directVideoClass = "DIRECT-chrome-better-HTML5-video";
 
 function processAllVideos(){
 	if(document.body.children.length == 1  // Handle direct video access
