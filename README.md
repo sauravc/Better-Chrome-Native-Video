@@ -24,6 +24,7 @@ Note that this extension is only meant to affect Chrome's native HTML5 video pla
 | Up Arrow          | Increase volume                           |
 | Down Arrow        | Decrease volume                           |
 | M                 | Toggle mute                               |
+| R                 | Reload video source                       |
 | Less Than (<)     | Slow down video playback                  |
 | Greater Than (>)  | Speed up video playback                   |
 | Question Mark (?) | Return to default playback speed          |
