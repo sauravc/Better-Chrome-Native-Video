@@ -47,12 +47,21 @@ function processAllVideos(){
 				&& document.body.firstElementChild.hasAttribute("controls")){
 					registerDirectVideo();
 				}
-				if(mrs[i].addedNodes) for(let j = 0; j < mrs[i].addedNodes.length; ++j){
-					const an = mrs[i].addedNodes[j];
-					if(an.tagName && an.tagName.toUpperCase() == "VIDEO"
-					&& !an.classList.contains(videoClass)
-					&& an.hasAttribute("controls")){
-						registerVideo(an);
+				if(mrs[i].addedNodes){
+					for(let j = 0; j < mrs[i].addedNodes.length; ++j){
+						const an = mrs[i].addedNodes[j];
+						if(an.tagName && an.tagName.toUpperCase() == "VIDEO"){
+							if(!an.classList.contains(videoClass)
+							&& an.hasAttribute("controls"))
+								registerVideo(an);
+						}else if(an.getElementsByTagName){
+							const cn = an.getElementsByTagName("VIDEO");
+							for(let k=0;k<cn.length;++k){
+								if(!cn[k].classList.contains(videoClass)
+								&& cn[k].hasAttribute("controls"))
+									registerVideo(cn[k]);
+							}
+						}
 					}
 				}
 			}
