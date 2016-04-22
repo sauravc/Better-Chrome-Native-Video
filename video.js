@@ -9,17 +9,17 @@ function processAllVideos(){
 	&& document.body.firstElementChild.hasAttribute("controls")){
 		registerDirectVideo();
 	}else{
-		let videos = document.getElementsByTagName("video");
+		const videos = document.getElementsByTagName("video");
 		for(let i = 0; i < videos.length; ++i){
 			if(videos[i].hasAttribute("controls"))
 				registerVideo(videos[i]);
 		}
 	}
 	
-	let observer = new MutationObserver(function(mrs){
+	const observer = new MutationObserver(function(mrs){
 		for(let i = 0; i < mrs.length; ++i){
 			if(mrs[i].type == "attributes" && mrs[i].attributeName == "controls"){
-				let t = mrs[i].target;
+				const t = mrs[i].target;
 				if(!t.hasAttribute("controls")){
 					if(t.classList.contains(directVideoClass)){
 						unregisterDirectVideo();
@@ -48,7 +48,7 @@ function processAllVideos(){
 					registerDirectVideo();
 				}
 				if(mrs[i].addedNodes) for(let j = 0; j < mrs[i].addedNodes.length; ++j){
-					let an = mrs[i].addedNodes[j];
+					const an = mrs[i].addedNodes[j];
 					if(an.tagName && an.tagName.toUpperCase() == "VIDEO"
 					&& !an.classList.contains(videoClass)
 					&& an.hasAttribute("controls")){
@@ -67,7 +67,7 @@ function processAllVideos(){
 }
 
 function registerDirectVideo(){
-	let vids = document.getElementsByClassName(videoClass);
+	const vids = document.getElementsByClassName(videoClass);
 	for(let i = 0; i < vids.length; ++i){
 		unregisterVideo(vids[i]);
 	}
@@ -79,7 +79,7 @@ function registerDirectVideo(){
 function unregisterDirectVideo(){
 	document.removeEventListener("click", directHandleClick);
 	document.removeEventListener("keydown", directHandleKey);
-	let vids = document.getElementsByClassName(directVideoClass);
+	const vids = document.getElementsByClassName(directVideoClass);
 	for(let i = 0; i < vids.length; ++i){
 		registerVideo(vids[i]);
 		vids[i].focus();
@@ -102,7 +102,7 @@ function unregisterVideo(v){
 }
 
 function directHandleClick(e){
-	let v = this.body.firstElementChild;
+	const v = this.body.firstElementChild;
 	if(v.paused)
 		v.play();
 	else
@@ -175,7 +175,7 @@ function handleKey(e, v){
 			v.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
 		break;
 	case 82: // R
-		let currTime = v.currentTime;
+		const currTime = v.currentTime;
 		v.load();
 		v.currentTime = currTime;
 	case 188: // Comma or Less-Than
