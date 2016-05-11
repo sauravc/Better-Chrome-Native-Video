@@ -3,6 +3,118 @@
 const videoClass = "chrome-better-HTML5-video";
 const directVideoClass = "DIRECT-chrome-better-HTML5-video";
 
+//// BEGIN SHORTCUT FUNCTIONS ////
+
+function togglePlay(v){
+	if(v.paused)
+		v.play();
+	else
+		v.pause();
+}
+
+function toStart(v){
+	v.currentTime = 0;
+}
+
+function toEnd(v){
+	v.currentTime = v.duration;
+}
+
+function skipLeft(v,e){
+	if(e.shiftKey)
+		v.currentTime -= 10;
+	else
+		v.currentTime -= 5;
+}
+
+function skipRight(v,e){
+	if(e.shiftKey)
+		v.currentTime += 10;
+	else
+		v.currentTime += 5;
+}
+
+function increaseVol(v){
+	if(v.volume <= 0.9) v.volume += 0.1;
+	else v.volume = 1;
+}
+
+function decreaseVol(v){
+	if(v.volume >= 0.1) v.volume -= 0.1;
+	else v.volume = 0;
+}
+
+function toggleMute(v){
+	v.muted = !v.muted;
+}
+
+function toggleFS(v){
+	if(document.webkitFullscreenElement)
+		document.webkitExitFullscreen();
+	else
+		v.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+}
+
+function reloadVideo(v){
+	const currTime = v.currentTime;
+	v.load();
+	v.currentTime = currTime;
+}
+
+function slowOrPrevFrame(v,e){
+	if(e.shiftKey) // Less-Than
+		v.playbackRate -= 0.25;
+	else // Comma
+		v.currentTime -= 1/60;
+}
+
+function fastOrNextFrame(v,e){
+	if(e.shiftKey) // Greater-Than
+		v.playbackRate += 0.25;
+	else // Period
+		v.currentTime += 1/60;
+}
+
+function normalSpeed(v,e){
+	if(e.shiftKey) // ?
+		v.playbackRate = v.defaultPlaybackRate;
+}
+
+function toPercentage(v,e){
+	v.currentTime = v.duration * (e.keyCode - 48) / 10.0;
+}
+
+//// END SHORTCUT FUNCTIONS ////
+
+const keyFuncs = {
+	 32: togglePlay,		// Space
+	 75: togglePlay,		// K
+	 35: toEnd,				// End
+	 48: toStart,			// 0
+	 36: toStart,			// Home
+	 37: skipLeft,			// Left arrow
+	 74: skipLeft,			// J
+	 39: skipRight,			// Right arrow
+	 76: skipRight,			// L
+	 38: increaseVol,		// Up arrow
+	 40: decreaseVol,		// Down arrow
+	 77: toggleMute,		// M
+	 70: toggleFS,			// F
+	 82: reloadVideo,		// R
+	188: slowOrPrevFrame,	// Comma or Less-Than
+	190: fastOrNextFrame,	// Period or Greater-Than
+	191: normalSpeed,		// Forward slash or ?
+	 49: toPercentage,		// 1
+	 50: toPercentage,		// 2
+	 51: toPercentage,		// 3
+	 52: toPercentage,		// 4
+	 53: toPercentage,		// 5
+	 54: toPercentage,		// 6
+	 55: toPercentage,		// 7
+	 56: toPercentage,		// 8
+	 57: toPercentage,		// 9
+};
+
 function processAllVideos(){
 	if(document.body.children.length == 1  // Handle direct video access
 	&& document.body.firstElementChild.tagName.toUpperCase() == "VIDEO"
@@ -82,12 +194,14 @@ function registerDirectVideo(){
 	}
 	document.body.firstElementChild.classList.add(directVideoClass);
 	document.addEventListener("click", directHandleClick);
-	document.addEventListener("keydown", directHandleKey);
+	document.addEventListener("keydown", directHandleKeyDown);
+	document.addEventListener("keyup", handleKeyUp);
 }
 
 function unregisterDirectVideo(){
 	document.removeEventListener("click", directHandleClick);
-	document.removeEventListener("keydown", directHandleKey);
+	document.removeEventListener("keydown", directHandleKeyDown);
+	document.removeEventListener("keyup", handleKeyUp);
 	const vids = document.getElementsByClassName(directVideoClass);
 	for(let i = 0; i < vids.length; ++i){
 		registerVideo(vids[i]);
@@ -99,117 +213,60 @@ function unregisterDirectVideo(){
 function registerVideo(v){
 	v.classList.add(videoClass);
 	v.addEventListener("click", handleClick);
-	v.addEventListener("keydown", handleKey);
+	v.addEventListener("keydown", handleKeyDown);
+	v.addEventListener("keyup", handleKeyUp);
 	v.addEventListener("webkitfullscreenchange", handleFullscreen);
 }
 
 function unregisterVideo(v){
 	v.classList.remove(videoClass);
 	v.removeEventListener("click", handleClick);
-	v.removeEventListener("keydown", handleKey);
+	v.removeEventListener("keydown", handleKeyDown);
+	v.removeEventListener("keyup", handleKeyUp);
 	v.removeEventListener("webkitfullscreenchange", handleFullscreen);
 }
 
 function directHandleClick(e){
 	const v = this.body.firstElementChild;
-	if(v.paused)
-		v.play();
-	else
-		v.pause();
+	togglePlay(v);
 }
 
-function directHandleKey(e){
-	handleKey(e, this.body.firstElementChild);
+function directHandleKeyDown(e){
+	return handleKeyDown(e, this.body.firstElementChild);
 }
 
 function handleClick(e){
 	if(document.activeElement === this){
-		if(this.paused)
-			this.play();
-		else
-			this.pause();
+		togglePlay(this);
+		return true;
 	}else{
-		e.preventDefault();
 		this.focus();
+		e.preventDefault();
+		e.stopPropagation();
+		return false
 	}
 }
 
-function handleKey(e, v){
+function handleKeyDown(e, v){
 	if(v === undefined)
 		v = this;
-	switch(e.keyCode){
-	case 32: // Space
-	case 75: // K
-		if(v.paused)
-			v.play();
-		else
-			v.pause();
-		break;
-	case 35: // End
-		v.currentTime = v.duration;
-		break;
-	case 48: // 0
-	case 36: // Home
-		v.currentTime = 0;
-		break;
-	case 37: // Left arrow
-	case 74: // J
-		if(e.shiftKey)
-			v.currentTime -= 10;
-		else
-			v.currentTime -= 5;
-		break;
-	case 39: // Right arrow
-	case 76: // L
-		if(e.shiftKey)
-			v.currentTime += 10;
-		else
-			v.currentTime += 5;
-		break;
-	case 38: // Up arrow
-		if(v.volume <= 0.9) v.volume += 0.1;
-		else v.volume = 1;
-		break;
-	case 40: // Down arrow
-		if(v.volume >= 0.1) v.volume -= 0.1;
-		else v.volume = 0;
-		break;
-	case 77: // M
-		v.muted = !v.muted;
-		break;
-	case 70: // F
-		if(document.webkitFullscreenElement)
-			document.webkitExitFullscreen();
-		else
-			v.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-		break;
-	case 82: // R
-		const currTime = v.currentTime;
-		v.load();
-		v.currentTime = currTime;
-	case 188: // Comma or Less-Than
-		if(e.shiftKey) // Less-Than
-			v.playbackRate -= 0.25;
-		else // Comma
-			v.currentTime -= 1/60;
-		break;
-	case 190: // Period or Greater-Than
-		if(e.shiftKey) // Greater-Than
-			v.playbackRate += 0.25;
-		else // Period
-			v.currentTime += 1/60;
-		break;
-	case 191: // Forward slash or ?
-		if(e.shiftKey) // ?
-			v.playbackRate = v.defaultPlaybackRate;
-		break;
-	default:
-		if(e.keyCode >= 49 && e.keyCode <= 57) // 1-9
-			v.currentTime = v.duration * (e.keyCode - 48) / 10.0;
-		else
-			return; // Do not prevent default if no UI activated
+	const func = keyFuncs[e.keyCode];
+	if(func !== undefined){
+		func(v,e);
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
 	}
-	e.preventDefault();
+	return true; // Do not prevent default if no UI activated
+}
+
+function handleKeyUp(e){
+	if(keyFuncs[e.keyCode] !== undefined){
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+	return true; // Do not prevent default if no UI activated
 }
 
 function handleFullscreen(){
