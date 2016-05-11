@@ -195,12 +195,14 @@ function registerDirectVideo(){
 	document.body.firstElementChild.classList.add(directVideoClass);
 	document.addEventListener("click", directHandleClick);
 	document.addEventListener("keydown", directHandleKeyDown);
+	document.addEventListener("keypress", handleKeyUp);
 	document.addEventListener("keyup", handleKeyUp);
 }
 
 function unregisterDirectVideo(){
 	document.removeEventListener("click", directHandleClick);
 	document.removeEventListener("keydown", directHandleKeyDown);
+	document.removeEventListener("keypress", handleKeyUp);
 	document.removeEventListener("keyup", handleKeyUp);
 	const vids = document.getElementsByClassName(directVideoClass);
 	for(let i = 0; i < vids.length; ++i){
@@ -214,6 +216,7 @@ function registerVideo(v){
 	v.classList.add(videoClass);
 	v.addEventListener("click", handleClick);
 	v.addEventListener("keydown", handleKeyDown);
+	v.addEventListener("keypress", handleKeyUp);
 	v.addEventListener("keyup", handleKeyUp);
 	v.addEventListener("webkitfullscreenchange", handleFullscreen);
 }
@@ -222,6 +225,7 @@ function unregisterVideo(v){
 	v.classList.remove(videoClass);
 	v.removeEventListener("click", handleClick);
 	v.removeEventListener("keydown", handleKeyDown);
+	v.removeEventListener("keypress", handleKeyUp);
 	v.removeEventListener("keyup", handleKeyUp);
 	v.removeEventListener("webkitfullscreenchange", handleFullscreen);
 }
