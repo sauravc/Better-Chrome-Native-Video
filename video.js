@@ -87,8 +87,8 @@ function toPercentage(v,e){
 //// END SHORTCUT FUNCTIONS ////
 
 const keyFuncs = {
-	 32: togglePlay,		// Space
-	 75: togglePlay,		// K
+	 32: togglePlay,			// Space
+	 75: togglePlay,			// K
 	 35: toEnd,				// End
 	 48: toStart,			// 0
 	 36: toStart,			// Home
@@ -98,7 +98,7 @@ const keyFuncs = {
 	 76: skipRight,			// L
 	 38: increaseVol,		// Up arrow
 	 40: decreaseVol,		// Down arrow
-	 77: toggleMute,		// M
+	 77: toggleMute,			// M
 	 70: toggleFS,			// F
 	 82: reloadVideo,		// R
 	188: slowOrPrevFrame,	// Comma or Less-Than
