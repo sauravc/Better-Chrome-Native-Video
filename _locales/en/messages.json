@@ -12,5 +12,10 @@
 	"extDesc": {
 		"message": "Add keyboard support to Chrome's native HTML5 video player.",
 		"description": "Extension description"
+	},
+
+	"contextEnable": {
+		"message": "Enable Keyboard Shortcuts",
+		"description": "Message displayed in context menu on/off option"
 	}
 }
