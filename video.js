@@ -87,36 +87,36 @@ function toPercentage(v,e){
 //// END SHORTCUT FUNCTIONS ////
 
 const keyFuncs = {
-	 32: togglePlay,		// Space
-	 75: togglePlay,		// K
-	 35: toEnd,		// End
-	 48: toStart,		// 0
-	 36: toStart,		// Home
-	 37: skipLeft,		// Left arrow
-	 74: skipLeft,		// J
-	 39: skipRight,		// Right arrow
-	 76: skipRight,		// L
-	 38: increaseVol,	// Up arrow
-	 40: decreaseVol,	// Down arrow
-	 77: toggleMute,		// M
-	 70: toggleFS,		// F
-	 82: reloadVideo,	// R
-	188: slowOrPrevFrame,	// Comma or Less-Than
-	190: fastOrNextFrame,	// Period or Greater-Than
-	191: normalSpeed,	// Forward slash or ?
-	 49: toPercentage,	// 1
-	 50: toPercentage,	// 2
-	 51: toPercentage,	// 3
-	 52: toPercentage,	// 4
-	 53: toPercentage,	// 5
-	 54: toPercentage,	// 6
-	 55: toPercentage,	// 7
-	 56: toPercentage,	// 8
-	 57: toPercentage,	// 9
+	 32: togglePlay,      // Space
+	 75: togglePlay,      // K
+	 35: toEnd,           // End
+	 48: toStart,         // 0
+	 36: toStart,         // Home
+	 37: skipLeft,        // Left arrow
+	 74: skipLeft,        // J
+	 39: skipRight,       // Right arrow
+	 76: skipRight,       // L
+	 38: increaseVol,     // Up arrow
+	 40: decreaseVol,     // Down arrow
+	 77: toggleMute,      // M
+	 70: toggleFS,        // F
+	 82: reloadVideo,     // R
+	188: slowOrPrevFrame, // Comma or Less-Than
+	190: fastOrNextFrame, // Period or Greater-Than
+	191: normalSpeed,     // Forward slash or ?
+	 49: toPercentage,    // 1
+	 50: toPercentage,    // 2
+	 51: toPercentage,    // 3
+	 52: toPercentage,    // 4
+	 53: toPercentage,    // 5
+	 54: toPercentage,    // 6
+	 55: toPercentage,    // 7
+	 56: toPercentage,    // 8
+	 57: toPercentage,    // 9
 };
 
 function processAllVideos(){
-	if(document.body.children.length == 1  // Handle direct video access
+	if(document.body.children.length == 1 // Handle direct video access
 	&& document.body.firstElementChild.tagName.toUpperCase() == "VIDEO"
 	&& document.body.firstElementChild.hasAttribute("controls")){
 		registerDirectVideo();
