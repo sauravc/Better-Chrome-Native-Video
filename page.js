@@ -3,116 +3,114 @@
 const videoClass = "chrome-better-HTML5-video";
 const directVideoClass = "DIRECT-chrome-better-HTML5-video";
 
-//// BEGIN SHORTCUT FUNCTIONS ////
+const shortcutFuncs = {
+	togglePlay: function(v){
+		if(v.paused)
+			v.play();
+		else
+			v.pause();
+	}
 
-function togglePlay(v){
-	if(v.paused)
-		v.play();
-	else
-		v.pause();
+	toStart: function(v){
+		v.currentTime = 0;
+	}
+
+	toEnd: function(v){
+		v.currentTime = v.duration;
+	}
+
+	skipLeft: function(v,e){
+		if(e.shiftKey)
+			v.currentTime -= 10;
+		else
+			v.currentTime -= 5;
+	}
+
+	skipRight: function(v,e){
+		if(e.shiftKey)
+			v.currentTime += 10;
+		else
+			v.currentTime += 5;
+	}
+
+	increaseVol: function(v){
+		if(v.volume <= 0.9) v.volume += 0.1;
+		else v.volume = 1;
+	}
+
+	decreaseVol: function(v){
+		if(v.volume >= 0.1) v.volume -= 0.1;
+		else v.volume = 0;
+	}
+
+	toggleMute: function(v){
+		v.muted = !v.muted;
+	}
+
+	toggleFS: function(v){
+		if(document.webkitFullscreenElement)
+			document.webkitExitFullscreen();
+		else
+			v.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+	}
+
+	reloadVideo: function(v){
+		const currTime = v.currentTime;
+		v.load();
+		v.currentTime = currTime;
+	}
+
+	slowOrPrevFrame: function(v,e){
+		if(e.shiftKey) // Less-Than
+			v.playbackRate -= 0.25;
+		else // Comma
+			v.currentTime -= 1/60;
+	}
+
+	fastOrNextFrame: function(v,e){
+		if(e.shiftKey) // Greater-Than
+			v.playbackRate += 0.25;
+		else // Period
+			v.currentTime += 1/60;
+	}
+
+	normalSpeed: function(v,e){
+		if(e.shiftKey) // ?
+			v.playbackRate = v.defaultPlaybackRate;
+	}
+
+	toPercentage: function(v,e){
+		v.currentTime = v.duration * (e.keyCode - 48) / 10.0;
+	}
 }
-
-function toStart(v){
-	v.currentTime = 0;
-}
-
-function toEnd(v){
-	v.currentTime = v.duration;
-}
-
-function skipLeft(v,e){
-	if(e.shiftKey)
-		v.currentTime -= 10;
-	else
-		v.currentTime -= 5;
-}
-
-function skipRight(v,e){
-	if(e.shiftKey)
-		v.currentTime += 10;
-	else
-		v.currentTime += 5;
-}
-
-function increaseVol(v){
-	if(v.volume <= 0.9) v.volume += 0.1;
-	else v.volume = 1;
-}
-
-function decreaseVol(v){
-	if(v.volume >= 0.1) v.volume -= 0.1;
-	else v.volume = 0;
-}
-
-function toggleMute(v){
-	v.muted = !v.muted;
-}
-
-function toggleFS(v){
-	if(document.webkitFullscreenElement)
-		document.webkitExitFullscreen();
-	else
-		v.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-}
-
-function reloadVideo(v){
-	const currTime = v.currentTime;
-	v.load();
-	v.currentTime = currTime;
-}
-
-function slowOrPrevFrame(v,e){
-	if(e.shiftKey) // Less-Than
-		v.playbackRate -= 0.25;
-	else // Comma
-		v.currentTime -= 1/60;
-}
-
-function fastOrNextFrame(v,e){
-	if(e.shiftKey) // Greater-Than
-		v.playbackRate += 0.25;
-	else // Period
-		v.currentTime += 1/60;
-}
-
-function normalSpeed(v,e){
-	if(e.shiftKey) // ?
-		v.playbackRate = v.defaultPlaybackRate;
-}
-
-function toPercentage(v,e){
-	v.currentTime = v.duration * (e.keyCode - 48) / 10.0;
-}
-
-//// END SHORTCUT FUNCTIONS ////
 
 const keyFuncs = {
-	 32: togglePlay,      // Space
-	 75: togglePlay,      // K
-	 35: toEnd,           // End
-	 48: toStart,         // 0
-	 36: toStart,         // Home
-	 37: skipLeft,        // Left arrow
-	 74: skipLeft,        // J
-	 39: skipRight,       // Right arrow
-	 76: skipRight,       // L
-	 38: increaseVol,     // Up arrow
-	 40: decreaseVol,     // Down arrow
-	 77: toggleMute,      // M
-	 70: toggleFS,        // F
-	 82: reloadVideo,     // R
-	188: slowOrPrevFrame, // Comma or Less-Than
-	190: fastOrNextFrame, // Period or Greater-Than
-	191: normalSpeed,     // Forward slash or ?
-	 49: toPercentage,    // 1
-	 50: toPercentage,    // 2
-	 51: toPercentage,    // 3
-	 52: toPercentage,    // 4
-	 53: toPercentage,    // 5
-	 54: toPercentage,    // 6
-	 55: toPercentage,    // 7
-	 56: toPercentage,    // 8
-	 57: toPercentage,    // 9
+	 32: shortcutFuncs.togglePlay,      // Space
+	 75: shortcutFuncs.togglePlay,      // K
+	 35: shortcutFuncs.toEnd,           // End
+	 48: shortcutFuncs.toStart,         // 0
+	 36: shortcutFuncs.toStart,         // Home
+	 37: shortcutFuncs.skipLeft,        // Left arrow
+	 74: shortcutFuncs.skipLeft,        // J
+	 39: shortcutFuncs.skipRight,       // Right arrow
+	 76: shortcutFuncs.skipRight,       // L
+	 38: shortcutFuncs.increaseVol,     // Up arrow
+	 40: shortcutFuncs.decreaseVol,     // Down arrow
+	 77: shortcutFuncs.toggleMute,      // M
+	 70: shortcutFuncs.toggleFS,        // F
+	 82: shortcutFuncs.reloadVideo,     // R
+	188: shortcutFuncs.slowOrPrevFrame, // Comma or Less-Than
+	190: shortcutFuncs.fastOrNextFrame, // Period or Greater-Than
+	191: shortcutFuncs.normalSpeed,     // Forward slash or ?
+	 49: shortcutFuncs.toPercentage,    // 1
+	 50: shortcutFuncs.toPercentage,    // 2
+	 51: shortcutFuncs.toPercentage,    // 3
+	 52: shortcutFuncs.toPercentage,    // 4
+	 53: shortcutFuncs.toPercentage,    // 5
+	 54: shortcutFuncs.toPercentage,    // 6
+	 55: shortcutFuncs.toPercentage,    // 7
+	 56: shortcutFuncs.toPercentage,    // 8
+	 57: shortcutFuncs.toPercentage,    // 9
 };
 
 function processAllVideos(){
