@@ -15,7 +15,7 @@
 	},
 
 	"contextToggle": {
-		"message": "Disable Video Keyboard Shortcuts",
+		"message": "Disable shortcuts",
 		"description": "Message displayed in context menu on/off option"
 	}
 }
