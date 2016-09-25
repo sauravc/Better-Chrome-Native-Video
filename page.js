@@ -4,7 +4,7 @@ const videoClass = "chrome-better-HTML5-video",
       directVideoClass = "DIRECT-chrome-better-HTML5-video",
       ignoreVideoClass = "IGNORE-chrome-better-HTML5-video";
 
-var observer, dirVideo, regVideos = [];
+var toggleChecked, toggleEnabled, observer, dirVideo, regVideos = [];
 
 const shortcutFuncs = {
 	togglePlay: function(v){
@@ -229,37 +229,44 @@ function handleFullscreen(){
 
 function updateContextTarget(e){
 	if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'video'){
-		let target = e.target;
-		chrome.runtime.sendMessage({
-			toggleChecked: target.classList.contains(ignoreVideoClass)
-		}, function(response) {
-			if(!response){
-				console.log("Error while connecting:",
-					chrome.runtime.lastError.message);
-				return;
-			}
-			if(response.clicked){
-				if(response.ignoreVideo){
-					if(target.classList.contains(directVideoClass)){
-						unregisterDirectVideo(false);
-					}
-					if(target.classList.contains(videoClass)){
-						unregisterVideo(target);
-					}
-					target.classList.add(ignoreVideoClass);
-				}else{
-					target.classList.remove(ignoreVideoClass);
-					if(target.hasAttribute("controls")){
-						if(document.body.children.length === 1
-						&& document.body.firstElementChild === target){
-							registerDirectVideo(target);
-						}else{
-							registerVideo(target);
+		let target  = e.target,
+		    checked = target.classList.contains(ignoreVideoClass),
+		    enabled = target.hasAttribute('controls');
+		if(toggleChecked !== checked || toggleEnabled !== enabled){
+			chrome.runtime.sendMessage({
+				toggleChecked: checked,
+				toggleEnabled: enabled
+			}, function(response) {
+				if(!response){
+					console.log("Error while connecting:",
+						chrome.runtime.lastError.message);
+					return;
+				}
+				if(response.clicked){
+					if(response.ignoreVideo){
+						if(target.classList.contains(directVideoClass)){
+							unregisterDirectVideo(false);
+						}
+						if(target.classList.contains(videoClass)){
+							unregisterVideo(target);
+						}
+						target.classList.add(ignoreVideoClass);
+					}else{
+						target.classList.remove(ignoreVideoClass);
+						if(target.hasAttribute("controls")){
+							if(document.body.children.length === 1
+							&& document.body.firstElementChild === target){
+								registerDirectVideo(target);
+							}else{
+								registerVideo(target);
+							}
 						}
 					}
 				}
-			}
-		});
+			});
+			toggleChecked = checked;
+			toggleEnabled = enabled;
+		}
 	}
 }
 
@@ -327,6 +334,7 @@ function handleMutationRecords(mrs){
 function enableExtension(){
 	document.addEventListener("webkitfullscreenchange", handleFullscreen);
 	document.addEventListener("mouseover", updateContextTarget);
+	document.addEventListener("mousedown", updateContextTarget);
 	document.addEventListener("contextmenu", updateContextTarget);
 	
 	if(document.body.children.length === 1 // Handle direct video access
@@ -350,6 +358,7 @@ function enableExtension(){
 function  disableExtension(){
 	document.removeEventListener("webkitfullscreenchange", handleFullscreen);
 	document.removeEventListener("mouseover", updateContextTarget);
+	document.removeEventListener("mousedown", updateContextTarget);
 	document.removeEventListener("contextmenu", updateContextTarget);
 	
 	if(dirVideo) unregisterDirectVideo(false);

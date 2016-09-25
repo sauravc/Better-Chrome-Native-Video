@@ -37,7 +37,8 @@ chrome.runtime.onMessage.addListener(
 		lastSendResponse = sendResponse;
 		
 		chrome.contextMenus.update(toggleContextID, {
-			checked: request.toggleChecked
+			checked: request.toggleChecked,
+			enabled: request.toggleEnabled
 		});
 		
 		return true; // async sendResponse
