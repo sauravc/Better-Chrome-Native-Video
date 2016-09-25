@@ -85,32 +85,32 @@ const shortcutFuncs = {
 }
 
 const keyFuncs = {
-	 32: shortcutFuncs.togglePlay,      // Space
-	 75: shortcutFuncs.togglePlay,      // K
-	 35: shortcutFuncs.toEnd,           // End
-	 48: shortcutFuncs.toStart,         // 0
-	 36: shortcutFuncs.toStart,         // Home
-	 37: shortcutFuncs.skipLeft,        // Left arrow
-	 74: shortcutFuncs.skipLeft,        // J
-	 39: shortcutFuncs.skipRight,       // Right arrow
-	 76: shortcutFuncs.skipRight,       // L
-	 38: shortcutFuncs.increaseVol,     // Up arrow
-	 40: shortcutFuncs.decreaseVol,     // Down arrow
-	 77: shortcutFuncs.toggleMute,      // M
-	 70: shortcutFuncs.toggleFS,        // F
-	 82: shortcutFuncs.reloadVideo,     // R
+	32 : shortcutFuncs.togglePlay,      // Space
+	75 : shortcutFuncs.togglePlay,      // K
+	35 : shortcutFuncs.toEnd,           // End
+	48 : shortcutFuncs.toStart,         // 0
+	36 : shortcutFuncs.toStart,         // Home
+	37 : shortcutFuncs.skipLeft,        // Left arrow
+	74 : shortcutFuncs.skipLeft,        // J
+	39 : shortcutFuncs.skipRight,       // Right arrow
+	76 : shortcutFuncs.skipRight,       // L
+	38 : shortcutFuncs.increaseVol,     // Up arrow
+	40 : shortcutFuncs.decreaseVol,     // Down arrow
+	77 : shortcutFuncs.toggleMute,      // M
+	70 : shortcutFuncs.toggleFS,        // F
+	82 : shortcutFuncs.reloadVideo,     // R
 	188: shortcutFuncs.slowOrPrevFrame, // Comma or Less-Than
 	190: shortcutFuncs.fastOrNextFrame, // Period or Greater-Than
 	191: shortcutFuncs.normalSpeed,     // Forward slash or ?
-	 49: shortcutFuncs.toPercentage,    // 1
-	 50: shortcutFuncs.toPercentage,    // 2
-	 51: shortcutFuncs.toPercentage,    // 3
-	 52: shortcutFuncs.toPercentage,    // 4
-	 53: shortcutFuncs.toPercentage,    // 5
-	 54: shortcutFuncs.toPercentage,    // 6
-	 55: shortcutFuncs.toPercentage,    // 7
-	 56: shortcutFuncs.toPercentage,    // 8
-	 57: shortcutFuncs.toPercentage,    // 9
+	49 : shortcutFuncs.toPercentage,    // 1
+	50 : shortcutFuncs.toPercentage,    // 2
+	51 : shortcutFuncs.toPercentage,    // 3
+	52 : shortcutFuncs.toPercentage,    // 4
+	53 : shortcutFuncs.toPercentage,    // 5
+	54 : shortcutFuncs.toPercentage,    // 6
+	55 : shortcutFuncs.toPercentage,    // 7
+	56 : shortcutFuncs.toPercentage,    // 8
+	57 : shortcutFuncs.toPercentage,    // 9
 };
 
 function processAllVideos(){
