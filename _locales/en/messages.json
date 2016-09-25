@@ -14,8 +14,8 @@
 		"description": "Extension description"
 	},
 
-	"contextEnable": {
-		"message": "Enable Keyboard Shortcuts",
+	"contextToggle": {
+		"message": "Disable Video Keyboard Shortcuts",
 		"description": "Message displayed in context menu on/off option"
 	}
 }

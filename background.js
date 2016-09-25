@@ -1,0 +1,45 @@
+"use strict";
+
+var lastSendResponse;
+
+const toggleContextID = chrome.contextMenus.create({
+	type    : "checkbox",
+	id      : "contextToggle",
+	title   : chrome.i18n.getMessage("contextToggle"),
+	contexts: ["video"],
+	onclick : function(info, tab) {
+		if(lastSendResponse) try {
+			lastSendResponse({
+				clicked    : true,
+				ignoreVideo: info.checked
+			});
+		} catch (e) {
+			// Errors occur when pages are closed or reloaded,
+			// leaving the background script with an expired
+			// sendResponse. No action needed.
+		}
+		
+		chrome.contextMenus.update(toggleContextID, {
+			checked: info.checked
+		});
+	}
+});
+
+chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		if(lastSendResponse) try {
+			lastSendResponse({clicked: false});
+		} catch (e) {
+			// Errors occur when pages are closed or reloaded,
+			// leaving the background script with an expired
+			// sendResponse. No action needed.
+		}
+		lastSendResponse = sendResponse;
+		
+		chrome.contextMenus.update(toggleContextID, {
+			checked: request.toggleChecked
+		});
+		
+		return true; // async sendResponse
+	}
+);

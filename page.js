@@ -1,7 +1,10 @@
 "use strict";
 
-const videoClass = "chrome-better-HTML5-video";
-const directVideoClass = "DIRECT-chrome-better-HTML5-video";
+const videoClass = "chrome-better-HTML5-video",
+      directVideoClass = "DIRECT-chrome-better-HTML5-video",
+      ignoreVideoClass = "IGNORE-chrome-better-HTML5-video";
+
+var observer, dirVideo, regVideos = [];
 
 const shortcutFuncs = {
 	togglePlay: function(v){
@@ -9,80 +12,80 @@ const shortcutFuncs = {
 			v.play();
 		else
 			v.pause();
-	}
+	},
 
 	toStart: function(v){
 		v.currentTime = 0;
-	}
+	},
 
 	toEnd: function(v){
 		v.currentTime = v.duration;
-	}
+	},
 
 	skipLeft: function(v,e){
 		if(e.shiftKey)
 			v.currentTime -= 10;
 		else
 			v.currentTime -= 5;
-	}
+	},
 
 	skipRight: function(v,e){
 		if(e.shiftKey)
 			v.currentTime += 10;
 		else
 			v.currentTime += 5;
-	}
+	},
 
 	increaseVol: function(v){
 		if(v.volume <= 0.9) v.volume += 0.1;
 		else v.volume = 1;
-	}
+	},
 
 	decreaseVol: function(v){
 		if(v.volume >= 0.1) v.volume -= 0.1;
 		else v.volume = 0;
-	}
+	},
 
 	toggleMute: function(v){
 		v.muted = !v.muted;
-	}
+	},
 
 	toggleFS: function(v){
 		if(document.webkitFullscreenElement)
 			document.webkitExitFullscreen();
 		else
 			v.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-	}
+	},
 
 	reloadVideo: function(v){
 		const currTime = v.currentTime;
 		v.load();
 		v.currentTime = currTime;
-	}
+	},
 
 	slowOrPrevFrame: function(v,e){
 		if(e.shiftKey) // Less-Than
 			v.playbackRate -= 0.25;
 		else // Comma
 			v.currentTime -= 1/60;
-	}
+	},
 
 	fastOrNextFrame: function(v,e){
 		if(e.shiftKey) // Greater-Than
 			v.playbackRate += 0.25;
 		else // Period
 			v.currentTime += 1/60;
-	}
+	},
 
 	normalSpeed: function(v,e){
 		if(e.shiftKey) // ?
 			v.playbackRate = v.defaultPlaybackRate;
-	}
+	},
 
 	toPercentage: function(v,e){
 		v.currentTime = v.duration * (e.keyCode - 48) / 10.0;
 	}
-}
+};
 
 const keyFuncs = {
 	32 : shortcutFuncs.togglePlay,      // Space
@@ -113,133 +116,82 @@ const keyFuncs = {
 	57 : shortcutFuncs.toPercentage,    // 9
 };
 
-function processAllVideos(){
-	if(document.body.children.length == 1 // Handle direct video access
-	&& document.body.firstElementChild.tagName.toUpperCase() == "VIDEO"
-	&& document.body.firstElementChild.hasAttribute("controls")){
-		registerDirectVideo();
-	}else{
-		const videos = document.getElementsByTagName("video");
-		for(let i = 0; i < videos.length; ++i){
-			if(videos[i].hasAttribute("controls"))
-				registerVideo(videos[i]);
-		}
+function registerDirectVideo(v){
+	unregisterAllVideos();
+	if(dirVideo){
+		unregisterDirectVideo(v !== dirVideo);
 	}
-	
-	const observer = new MutationObserver(function(mrs){
-		for(let i = 0; i < mrs.length; ++i){
-			if(mrs[i].type == "attributes" && mrs[i].attributeName == "controls"){
-				const t = mrs[i].target;
-				if(!t.hasAttribute("controls")){
-					if(t.classList.contains(directVideoClass)){
-						unregisterDirectVideo();
-					}else if(t.classList.contains(videoClass)){
-						unregisterVideo(t);
-					}
-				}else if(t.tagName.toUpperCase() == "VIDEO"){
-					if(document.body.children.length == 1
-					&& document.body.firstElementChild == t){
-						registerDirectVideo();
-					}else{
-						registerVideo(t);
-						t.focus();
-					}
-				}
-			}else{
-				// Handle direct video access
-				if(document.body.children.length != 1
-				|| !document.body.firstElementChild.classList.contains(directVideoClass)
-				|| !document.body.firstElementChild.hasAttribute("controls")){
-					unregisterDirectVideo();
-				}
-				if(document.body.children.length == 1
-				&& document.body.firstElementChild.tagName.toUpperCase() == "VIDEO"
-				&& document.body.firstElementChild.hasAttribute("controls")){
-					registerDirectVideo();
-				}
-				if(mrs[i].addedNodes){
-					for(let j = 0; j < mrs[i].addedNodes.length; ++j){
-						const an = mrs[i].addedNodes[j];
-						if(an.tagName && an.tagName.toUpperCase() == "VIDEO"){
-							if(!an.classList.contains(videoClass)
-							&& an.hasAttribute("controls"))
-								registerVideo(an);
-						}else if(an.getElementsByTagName){
-							const cn = an.getElementsByTagName("VIDEO");
-							for(let k=0;k<cn.length;++k){
-								if(!cn[k].classList.contains(videoClass)
-								&& cn[k].hasAttribute("controls"))
-									registerVideo(cn[k]);
-							}
-						}
-					}
-				}
-			}
-		}
-	});
-	observer.observe(document.documentElement, {
-		childList: true,
-		attributes: true,
-		attributeFilter: ["controls"],
-		subtree: true
-	});
-}
-
-function registerDirectVideo(){
-	const vids = document.getElementsByClassName(videoClass);
-	for(let i = 0; i < vids.length; ++i){
-		unregisterVideo(vids[i]);
-	}
-	document.body.firstElementChild.classList.add(directVideoClass);
+	dirVideo = v;
+	v.classList.add(directVideoClass);
 	document.addEventListener("click", directHandleClick);
 	document.addEventListener("keydown", directHandleKeyDown);
 	document.addEventListener("keypress", handleKeyUp);
 	document.addEventListener("keyup", handleKeyUp);
 }
 
-function unregisterDirectVideo(){
+function unregisterDirectVideo(reregister){
 	document.removeEventListener("click", directHandleClick);
 	document.removeEventListener("keydown", directHandleKeyDown);
 	document.removeEventListener("keypress", handleKeyUp);
 	document.removeEventListener("keyup", handleKeyUp);
-	const vids = document.getElementsByClassName(directVideoClass);
-	for(let i = 0; i < vids.length; ++i){
-		registerVideo(vids[i]);
-		vids[i].focus();
-		vids[i].classList.remove(directVideoClass);
+	dirVideo.classList.remove(directVideoClass);
+	if(reregister && document.body.contains(dirVideo)){
+		registerVideo(dirVideo);
+		dirVideo.focus();
 	}
+	dirVideo = undefined;
 }
 
 function registerVideo(v){
+	regVideos.push(v);
 	v.classList.add(videoClass);
 	v.addEventListener("click", handleClick);
 	v.addEventListener("keydown", handleKeyDown);
 	v.addEventListener("keypress", handleKeyUp);
 	v.addEventListener("keyup", handleKeyUp);
-	v.addEventListener("webkitfullscreenchange", handleFullscreen);
 }
 
 function unregisterVideo(v){
+	regVideos.remove(v);
 	v.classList.remove(videoClass);
 	v.removeEventListener("click", handleClick);
 	v.removeEventListener("keydown", handleKeyDown);
 	v.removeEventListener("keypress", handleKeyUp);
 	v.removeEventListener("keyup", handleKeyUp);
-	v.removeEventListener("webkitfullscreenchange", handleFullscreen);
+}
+
+function registerAllValidVideos(vs){
+	for(let i = 0; i < vs.length; ++i){
+		if(vs[i].hasAttribute("controls")
+		&&!vs[i].classList.contains(videoClass)
+		&&!vs[i].classList.contains(ignoreVideoClass))
+			registerVideo(vs[i]);
+	}
+}
+
+function unregisterAllVideos(){
+	for(let i = 0; i < regVideos.length; ++i){
+		const v = regVideos[i];
+		v.classList.remove(videoClass);
+		v.removeEventListener("click", handleClick);
+		v.removeEventListener("keydown", handleKeyDown);
+		v.removeEventListener("keypress", handleKeyUp);
+		v.removeEventListener("keyup", handleKeyUp);
+	}
+	regVideos = [];
 }
 
 function directHandleClick(e){
-	const v = this.body.firstElementChild;
-	togglePlay(v);
+	shortcutFuncs.togglePlay(dirVideo);
 }
 
 function directHandleKeyDown(e){
-	return handleKeyDown(e, this.body.firstElementChild);
+	return handleKeyDown(e, dirVideo);
 }
 
 function handleClick(e){
 	if(document.activeElement === this){
-		togglePlay(this);
+		shortcutFuncs.togglePlay(this);
 		return true;
 	}else{
 		this.focus();
@@ -250,11 +202,9 @@ function handleClick(e){
 }
 
 function handleKeyDown(e, v){
-	if(v === undefined)
-		v = this;
 	const func = keyFuncs[e.keyCode];
 	if(func !== undefined){
-		func(v,e);
+		func(v || this, e);
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
@@ -272,11 +222,143 @@ function handleKeyUp(e){
 }
 
 function handleFullscreen(){
-	if(document.webkitFullscreenElement===this)
-		this.focus()
+	if(document.webkitFullscreenElement
+	&& document.webkitFullscreenElement.classList.contains(videoClass))
+		document.webkitFullscreenElement.focus()
+}
+
+function updateContextTarget(e){
+	if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'video'){
+		let target = e.target;
+		chrome.runtime.sendMessage({
+			toggleChecked: target.classList.contains(ignoreVideoClass)
+		}, function(response) {
+			if(!response){
+				console.log("Error while connecting:",
+					chrome.runtime.lastError.message);
+				return;
+			}
+			if(response.clicked){
+				if(response.ignoreVideo){
+					if(target.classList.contains(directVideoClass)){
+						unregisterDirectVideo(false);
+					}
+					if(target.classList.contains(videoClass)){
+						unregisterVideo(target);
+					}
+					target.classList.add(ignoreVideoClass);
+				}else{
+					target.classList.remove(ignoreVideoClass);
+					if(target.hasAttribute("controls")){
+						if(document.body.children.length === 1
+						&& document.body.firstElementChild === target){
+							registerDirectVideo(target);
+						}else{
+							registerVideo(target);
+						}
+					}
+				}
+			}
+		});
+	}
+}
+
+function handleMutationRecords(mrs){
+	for(let i = 0; i < mrs.length; ++i){
+		if(mrs[i].type === "attributes" && mrs[i].attributeName === "controls"){
+			const t = mrs[i].target;
+			if(!t.hasAttribute("controls")){
+				if(t.classList.contains(directVideoClass)){
+					unregisterDirectVideo(false);
+				}else if(t.classList.contains(videoClass)){
+					unregisterVideo(t);
+				}
+			}else if(t.tagName.toLowerCase() === "video"
+			&&      !t.classList.contains(ignoreVideoClass)){
+				if(document.body.children.length === 1
+				&& document.body.firstElementChild === t){
+					registerDirectVideo(t);
+				}else{
+					registerVideo(t);
+					t.focus();
+				}
+			}
+		}else if(mrs[i].type === "childList"){
+			// Handle direct video access
+			if(dirVideo && (document.body.children.length !== 1
+			|| document.body.firstElementChild !== dirVideo)){
+				unregisterDirectVideo(true);
+			}
+			if(document.body.children.length === 1
+			&& document.body.firstElementChild.tagName.toLowerCase() === "video"
+			&& document.body.firstElementChild.hasAttribute("controls")
+			&&!document.body.firstElementChild.classList.contains(ignoreVideoClass)
+			&&!document.body.firstElementChild.classList.contains(directVideoClass)){
+				registerDirectVideo(document.body.firstElementChild);
+			}else if(mrs[i].addedNodes){
+				for(let j = 0; j < mrs[i].addedNodes.length; ++j){
+					const an = mrs[i].addedNodes[j];
+					if(an.tagName && an.tagName.toLowerCase() === "video"){
+						if(an.hasAttribute("controls")
+						&&!an.classList.contains(videoClass)
+						&&!an.classList.contains(ignoreVideoClass))
+							registerVideo(an);
+					}else if(an.getElementsByTagName){
+						registerAllValidVideos(an.getElementsByTagName("video"));
+					}
+				}
+			}
+			if(mrs[i].removedNodes){
+				for(let j = 0; j < mrs[i].removedNodes.length; ++j){
+					const rn = mrs[i].removedNodes[j];
+					if(rn.classList){
+						if(rn.classList.contains(videoClass)){
+							unregisterVideo(rn);
+						}else if(rn.classList.contains(directVideoClass)){
+							unregisterDirectVideo(false);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+function enableExtension(){
+	document.addEventListener("webkitfullscreenchange", handleFullscreen);
+	document.addEventListener("mouseover", updateContextTarget);
+	document.addEventListener("contextmenu", updateContextTarget);
+	
+	if(document.body.children.length === 1 // Handle direct video access
+	&& document.body.firstElementChild.tagName.toLowerCase() === "video"
+	&& document.body.firstElementChild.hasAttribute("controls")
+	&&!document.body.firstElementChild.classList.contains(ignoreVideoClass)){
+		registerDirectVideo(document.body.firstElementChild);
+	}else{
+		registerAllValidVideos(document.getElementsByTagName("video"));
+	}
+	
+	observer = observer || new MutationObserver(handleMutationRecords);
+	observer.observe(document.documentElement, {
+		childList: true,
+		attributes: true,
+		attributeFilter: ["controls"],
+		subtree: true
+	});
+}
+
+function  disableExtension(){
+	document.removeEventListener("webkitfullscreenchange", handleFullscreen);
+	document.removeEventListener("mouseover", updateContextTarget);
+	document.removeEventListener("contextmenu", updateContextTarget);
+	
+	if(dirVideo) unregisterDirectVideo(false);
+	unregisterAllVideos();
+	
+	if(observer) observer.disconnect();
 }
 
 if(document.readyState !== "loading")
-	processAllVideos();
+	enableExtension();
 else
-	window.addEventListener("load", processAllVideos);
+	window.addEventListener("load", enableExtension);
