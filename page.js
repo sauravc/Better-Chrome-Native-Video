@@ -278,6 +278,7 @@ function updateContextTarget(e){
 								registerDirectVideo(target);
 							}else{
 								registerVideo(target);
+								target.focus();
 							}
 						}
 					}
