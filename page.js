@@ -25,6 +25,8 @@ const shortcutFuncs = {
 	skipLeft: function(v,key,shift,ctrl){
 		if(shift)
 			v.currentTime -= 10;
+		else if(ctrl)
+			v.currentTime -= 1;
 		else
 			v.currentTime -= 5;
 	},
@@ -32,6 +34,8 @@ const shortcutFuncs = {
 	skipRight: function(v,key,shift,ctrl){
 		if(shift)
 			v.currentTime += 10;
+		else if(ctrl)
+			v.currentTime += 1;
 		else
 			v.currentTime += 5;
 	},
