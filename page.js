@@ -22,15 +22,15 @@ const shortcutFuncs = {
 		v.currentTime = v.duration;
 	},
 
-	skipLeft: function(v,e){
-		if(e.shiftKey)
+	skipLeft: function(v,key,shift,ctrl){
+		if(shift)
 			v.currentTime -= 10;
 		else
 			v.currentTime -= 5;
 	},
 
-	skipRight: function(v,e){
-		if(e.shiftKey)
+	skipRight: function(v,key,shift,ctrl){
+		if(shift)
 			v.currentTime += 10;
 		else
 			v.currentTime += 5;
@@ -63,27 +63,27 @@ const shortcutFuncs = {
 		v.currentTime = currTime;
 	},
 
-	slowOrPrevFrame: function(v,e){
-		if(e.shiftKey) // Less-Than
+	slowOrPrevFrame: function(v,key,shift){
+		if(shift) // Less-Than
 			v.playbackRate -= 0.25;
 		else // Comma
 			v.currentTime -= 1/60;
 	},
 
-	fastOrNextFrame: function(v,e){
-		if(e.shiftKey) // Greater-Than
+	fastOrNextFrame: function(v,key,shift){
+		if(shift) // Greater-Than
 			v.playbackRate += 0.25;
 		else // Period
 			v.currentTime += 1/60;
 	},
 
-	normalSpeed: function(v,e){
-		if(e.shiftKey) // ?
+	normalSpeed: function(v,key,shift){
+		if(shift) // ?
 			v.playbackRate = v.defaultPlaybackRate;
 	},
 
-	toPercentage: function(v,e){
-		v.currentTime = v.duration * (e.keyCode - 48) / 10.0;
+	toPercentage: function(v,key){
+		v.currentTime = v.duration * (key - 48) / 10.0;
 	}
 };
 
@@ -202,9 +202,16 @@ function handleClick(e){
 }
 
 function handleKeyDown(e, v){
+	if(e.altKey || e.metaKey){
+		return true; // Do not activate
+	}
 	const func = keyFuncs[e.keyCode];
-	if(func !== undefined){
-		func(v || this, e);
+	if(func){
+		if((func.length < 3 && e.shiftKey) ||
+		   (func.length < 4 && e.ctrlKey)){
+			return true; // Do not activate
+		}
+		func(v || this, e.keyCode, e.shiftKey, e.ctrlKey);
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
@@ -213,7 +220,15 @@ function handleKeyDown(e, v){
 }
 
 function handleKeyOther(e){
-	if(keyFuncs[e.keyCode] !== undefined){
+	if(e.altKey || e.metaKey){
+		return true; // Do not prevent default
+	}
+	const func = keyFuncs[e.keyCode];
+	if(func){
+		if((func.length < 3 && e.shiftKey) ||
+		   (func.length < 4 && e.ctrlKey)){
+			return true; // Do not prevent default
+		}
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
