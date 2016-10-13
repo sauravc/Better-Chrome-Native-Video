@@ -156,7 +156,7 @@ function registerVideo(v){
 }
 
 function unregisterVideo(v){
-	regVideos.remove(v);
+	regVideos.splice(regVideos.indexOf(v), 1);
 	v.classList.remove(videoClass);
 	v.removeEventListener("click", handleClick);
 	v.removeEventListener("keydown", handleKeyDown);
