@@ -125,15 +125,15 @@ function registerDirectVideo(v){
 	v.classList.add(directVideoClass);
 	document.addEventListener("click", directHandleClick);
 	document.addEventListener("keydown", directHandleKeyDown);
-	document.addEventListener("keypress", handleKeyUp);
-	document.addEventListener("keyup", handleKeyUp);
+	document.addEventListener("keypress", handleKeyOther);
+	document.addEventListener("keyup", handleKeyOther);
 }
 
 function unregisterDirectVideo(reregister){
 	document.removeEventListener("click", directHandleClick);
 	document.removeEventListener("keydown", directHandleKeyDown);
-	document.removeEventListener("keypress", handleKeyUp);
-	document.removeEventListener("keyup", handleKeyUp);
+	document.removeEventListener("keypress", handleKeyOther);
+	document.removeEventListener("keyup", handleKeyOther);
 	dirVideo.classList.remove(directVideoClass);
 	if(reregister && document.body.contains(dirVideo)){
 		registerVideo(dirVideo);
@@ -147,8 +147,8 @@ function registerVideo(v){
 	v.classList.add(videoClass);
 	v.addEventListener("click", handleClick);
 	v.addEventListener("keydown", handleKeyDown);
-	v.addEventListener("keypress", handleKeyUp);
-	v.addEventListener("keyup", handleKeyUp);
+	v.addEventListener("keypress", handleKeyOther);
+	v.addEventListener("keyup", handleKeyOther);
 }
 
 function unregisterVideo(v){
@@ -156,8 +156,8 @@ function unregisterVideo(v){
 	v.classList.remove(videoClass);
 	v.removeEventListener("click", handleClick);
 	v.removeEventListener("keydown", handleKeyDown);
-	v.removeEventListener("keypress", handleKeyUp);
-	v.removeEventListener("keyup", handleKeyUp);
+	v.removeEventListener("keypress", handleKeyOther);
+	v.removeEventListener("keyup", handleKeyOther);
 }
 
 function registerAllValidVideos(vs){
@@ -175,8 +175,8 @@ function unregisterAllVideos(){
 		v.classList.remove(videoClass);
 		v.removeEventListener("click", handleClick);
 		v.removeEventListener("keydown", handleKeyDown);
-		v.removeEventListener("keypress", handleKeyUp);
-		v.removeEventListener("keyup", handleKeyUp);
+		v.removeEventListener("keypress", handleKeyOther);
+		v.removeEventListener("keyup", handleKeyOther);
 	}
 	regVideos = [];
 }
@@ -212,7 +212,7 @@ function handleKeyDown(e, v){
 	return true; // Do not prevent default if no UI activated
 }
 
-function handleKeyUp(e){
+function handleKeyOther(e){
 	if(keyFuncs[e.keyCode] !== undefined){
 		e.preventDefault();
 		e.stopPropagation();
