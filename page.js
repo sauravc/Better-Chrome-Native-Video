@@ -84,6 +84,8 @@ const shortcutFuncs = {
 	normalSpeed: function(v,key,shift){
 		if(shift) // ?
 			v.playbackRate = v.defaultPlaybackRate;
+		else
+			return true; // Do not prevent default if no UI activated
 	},
 
 	toPercentage: function(v,key){
@@ -180,6 +182,7 @@ function handleClick(e){
 			return false
 		}
 	}
+	return true; // Do not prevent default
 }
 
 function handleKeyDown(e){
@@ -195,10 +198,11 @@ function handleKeyDown(e){
 		   (func.length < 4 && e.ctrlKey)){
 			return true; // Do not activate
 		}
-		func(dirVideo || e.target, e.keyCode, e.shiftKey, e.ctrlKey);
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
+		if(!func(dirVideo || e.target, e.keyCode, e.shiftKey, e.ctrlKey)){
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		}
 	}
 	return true; // Do not prevent default if no UI activated
 }
