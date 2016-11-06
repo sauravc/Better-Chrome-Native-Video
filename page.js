@@ -127,17 +127,9 @@ function registerDirectVideo(v){
 	}
 	dirVideo = v;
 	v.classList.add(directVideoClass);
-	document.addEventListener("click", directHandleClick);
-	document.addEventListener("keydown", directHandleKeyDown);
-	document.addEventListener("keypress", handleKeyOther);
-	document.addEventListener("keyup", handleKeyOther);
 }
 
 function unregisterDirectVideo(reregister){
-	document.removeEventListener("click", directHandleClick);
-	document.removeEventListener("keydown", directHandleKeyDown);
-	document.removeEventListener("keypress", handleKeyOther);
-	document.removeEventListener("keyup", handleKeyOther);
 	dirVideo.classList.remove(directVideoClass);
 	if(reregister && document.body.contains(dirVideo)){
 		registerVideo(dirVideo);
@@ -149,27 +141,20 @@ function unregisterDirectVideo(reregister){
 function registerVideo(v){
 	regVideos.push(v);
 	v.classList.add(videoClass);
-	v.addEventListener("click", handleClick);
-	v.addEventListener("keydown", handleKeyDown);
-	v.addEventListener("keypress", handleKeyOther);
-	v.addEventListener("keyup", handleKeyOther);
 }
 
 function unregisterVideo(v){
 	regVideos.splice(regVideos.indexOf(v), 1);
 	v.classList.remove(videoClass);
-	v.removeEventListener("click", handleClick);
-	v.removeEventListener("keydown", handleKeyDown);
-	v.removeEventListener("keypress", handleKeyOther);
-	v.removeEventListener("keyup", handleKeyOther);
 }
 
 function registerAllValidVideos(vs){
 	for(let i = 0; i < vs.length; ++i){
 		if(vs[i].hasAttribute("controls")
 		&&!vs[i].classList.contains(videoClass)
-		&&!vs[i].classList.contains(ignoreVideoClass))
+		&&!vs[i].classList.contains(ignoreVideoClass)){
 			registerVideo(vs[i]);
+		}
 	}
 }
 
@@ -177,35 +162,30 @@ function unregisterAllVideos(){
 	for(let i = 0; i < regVideos.length; ++i){
 		const v = regVideos[i];
 		v.classList.remove(videoClass);
-		v.removeEventListener("click", handleClick);
-		v.removeEventListener("keydown", handleKeyDown);
-		v.removeEventListener("keypress", handleKeyOther);
-		v.removeEventListener("keyup", handleKeyOther);
 	}
 	regVideos = [];
 }
 
-function directHandleClick(e){
-	shortcutFuncs.togglePlay(dirVideo);
-}
-
-function directHandleKeyDown(e){
-	return handleKeyDown(e, dirVideo);
-}
-
 function handleClick(e){
-	if(document.activeElement === this){
-		shortcutFuncs.togglePlay(this);
-		return true;
-	}else{
-		this.focus();
-		e.preventDefault();
-		e.stopPropagation();
-		return false
+	if(dirVideo){
+		shortcutFuncs.togglePlay(dirVideo);
+	}else if(e.target.classList.contains(videoClass)){
+		const v = e.target;
+		if(document.activeElement === v){
+			shortcutFuncs.togglePlay(v);
+		}else{
+			v.focus();
+			e.preventDefault();
+			e.stopPropagation();
+			return false
+		}
 	}
 }
 
-function handleKeyDown(e, v){
+function handleKeyDown(e){
+	if(!dirVideo && !e.target.classList.contains(videoClass)){
+		return true; // Do not activate
+	}
 	if(e.altKey || e.metaKey){
 		return true; // Do not activate
 	}
@@ -215,7 +195,7 @@ function handleKeyDown(e, v){
 		   (func.length < 4 && e.ctrlKey)){
 			return true; // Do not activate
 		}
-		func(v || this, e.keyCode, e.shiftKey, e.ctrlKey);
+		func(dirVideo || e.target, e.keyCode, e.shiftKey, e.ctrlKey);
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
@@ -224,6 +204,9 @@ function handleKeyDown(e, v){
 }
 
 function handleKeyOther(e){
+	if(!dirVideo && !e.target.classList.contains(videoClass)){
+		return true; // Do not prevent default
+	}
 	if(e.altKey || e.metaKey){
 		return true; // Do not prevent default
 	}
@@ -242,15 +225,16 @@ function handleKeyOther(e){
 
 function handleFullscreen(){
 	if(document.webkitFullscreenElement
-	&& document.webkitFullscreenElement.classList.contains(videoClass))
-		document.webkitFullscreenElement.focus()
+	&& document.webkitFullscreenElement.classList.contains(videoClass)){
+		document.webkitFullscreenElement.focus();
+	}
 }
 
 function updateContextTarget(e){
 	if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'video'){
-		let target  = e.target,
-		    checked = target.classList.contains(ignoreVideoClass),
-		    enabled = target.hasAttribute('controls');
+		const target  = e.target,
+		      checked = target.classList.contains(ignoreVideoClass),
+		      enabled = target.hasAttribute('controls');
 		if(toggleChecked !== checked || toggleEnabled !== enabled){
 			chrome.runtime.sendMessage({
 				toggleChecked: checked,
@@ -328,8 +312,9 @@ function handleMutationRecords(mrs){
 					if(an.tagName && an.tagName.toLowerCase() === "video"){
 						if(an.hasAttribute("controls")
 						&&!an.classList.contains(videoClass)
-						&&!an.classList.contains(ignoreVideoClass))
+						&&!an.classList.contains(ignoreVideoClass)){
 							registerVideo(an);
+						}
 					}else if(an.getElementsByTagName){
 						registerAllValidVideos(an.getElementsByTagName("video"));
 					}
@@ -357,6 +342,11 @@ function enableExtension(){
 	document.addEventListener("mousedown", updateContextTarget);
 	document.addEventListener("contextmenu", updateContextTarget);
 	
+	document.addEventListener("click", handleClick);
+	document.addEventListener("keydown", handleKeyDown);
+	document.addEventListener("keypress", handleKeyOther);
+	document.addEventListener("keyup", handleKeyOther);
+	
 	if(document.body.children.length === 1 // Handle direct video access
 	&& document.body.firstElementChild.tagName.toLowerCase() === "video"
 	&& document.body.firstElementChild.hasAttribute("controls")
@@ -380,6 +370,11 @@ function  disableExtension(){
 	document.removeEventListener("mouseover", updateContextTarget);
 	document.removeEventListener("mousedown", updateContextTarget);
 	document.removeEventListener("contextmenu", updateContextTarget);
+	
+	document.removeEventListener("click", handleClick);
+	document.removeEventListener("keydown", handleKeyDown);
+	document.removeEventListener("keypress", handleKeyOther);
+	document.removeEventListener("keyup", handleKeyOther);
 	
 	if(dirVideo) unregisterDirectVideo(false);
 	unregisterAllVideos();
