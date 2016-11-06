@@ -7,6 +7,77 @@ const videoClass = "chrome-better-HTML5-video",
 var toggleChecked, toggleEnabled, observer, dirVideo, regVideos = [];
 
 const shortcutFuncs = {
+	toggleCaptions: function(v){
+		const validTracks = [];
+		for(let i = 0; i < v.textTracks.length; ++i){
+			const tt = v.textTracks[i];
+			if(tt.mode === "showing"){
+				tt.mode = "disabled";
+				if(v.textTracks.addEventListener){
+					// If text track event listeners are supported
+					// (they are on the most recent Chrome), add
+					// a marker to remember the old track. Use a
+					// listener to delete it if a different track
+					// is selected.
+					v.dataset.cbhtml5vsLastCaptionTrack = tt.label;
+					function cleanup(e){
+						for(let i = 0; i < v.textTracks.length; ++i){
+							const ott = v.textTracks[i];
+							if(ott.mode === "showing"){
+								delete v.dataset.cbhtml5vsLastCaptionTrack;
+								v.textTracks.removeEventListener("change", cleanup);
+								return;
+							}
+						}
+					}
+					v.textTracks.addEventListener("change", cleanup);
+				}
+				return;
+			}else if(tt.mode !== "hidden"){
+				validTracks.push(tt);
+			}
+		}
+		// If we got here, none of the tracks were selected.
+		if(validTracks.length === 0){
+			return true; // Do not prevent default if no UI activated
+		}
+		// Find the best one and select it.
+		validTracks.sort(function(a, b){
+			
+			if(v.dataset.cbhtml5vsLastCaptionTrack){
+				const lastLabel = v.dataset.cbhtml5vsLastCaptionTrack;
+				
+				if(a.label === lastLabel && b.label !== lastLabel){
+					return -1;
+				}else if(b.label === lastLabel && a.label !== lastLabel){
+					return 1;
+				}
+			}
+			
+			const aLang = a.language.toLowerCase(),
+			      bLang = b.language.toLowerCase(),
+			      navLang = navigator.language.toLowerCase();
+			
+			if(aLang === navLang && bLang !== navLang){
+				return -1;
+			}else if(bLang === navLang && aLang !== navLang){
+				return 1;
+			}
+			
+			const aPre = aLang.split("-")[0],
+			      bPre = bLang.split("-")[0],
+			      navPre = navLang.split("-")[0];
+			
+			if(aPre === navPre && bPre !== navPre){
+				return -1;
+			}else if(bPre === navPre && aPre !== navPre){
+				return 1;
+			}
+			
+			return 0;
+		})[0].mode = "showing";
+	},
+	
 	togglePlay: function(v){
 		if(v.paused)
 			v.play();
@@ -90,7 +161,7 @@ const shortcutFuncs = {
 
 	toPercentage: function(v,key){
 		v.currentTime = v.duration * (key - 48) / 10.0;
-	}
+	},
 };
 
 const keyFuncs = {
@@ -107,6 +178,7 @@ const keyFuncs = {
 	40 : shortcutFuncs.decreaseVol,     // Down arrow
 	77 : shortcutFuncs.toggleMute,      // M
 	70 : shortcutFuncs.toggleFS,        // F
+	67 : shortcutFuncs.toggleCaptions,  // C
 	82 : shortcutFuncs.reloadVideo,     // R
 	188: shortcutFuncs.slowOrPrevFrame, // Comma or Less-Than
 	190: shortcutFuncs.fastOrNextFrame, // Period or Greater-Than
@@ -235,10 +307,10 @@ function handleFullscreen(){
 }
 
 function updateContextTarget(e){
-	if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'video'){
+	if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === "video"){
 		const target  = e.target,
 		      checked = target.classList.contains(ignoreVideoClass),
-		      enabled = target.hasAttribute('controls');
+		      enabled = target.hasAttribute("controls");
 		if(toggleChecked !== checked || toggleEnabled !== enabled){
 			chrome.runtime.sendMessage({
 				toggleChecked: checked,
@@ -369,7 +441,7 @@ function enableExtension(){
 	});
 }
 
-function  disableExtension(){
+function disableExtension(){
 	document.removeEventListener("webkitfullscreenchange", handleFullscreen);
 	document.removeEventListener("mouseover", updateContextTarget);
 	document.removeEventListener("mousedown", updateContextTarget);
