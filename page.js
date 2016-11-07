@@ -241,7 +241,8 @@ function unregisterAllVideos(){
 function handleClick(e){
 	if(dirVideo){
 		shortcutFuncs.togglePlay(dirVideo);
-	}else if(e.target.classList.contains(videoClass)){
+	}else if(e.target.classList
+	      && e.target.classList.contains(videoClass)){
 		const v = e.target;
 		if(document.activeElement === v){
 			shortcutFuncs.togglePlay(v);
@@ -256,7 +257,9 @@ function handleClick(e){
 }
 
 function handleKeyDown(e){
-	if(!dirVideo && !e.target.classList.contains(videoClass)){
+	if(!dirVideo
+	&& !(e.target.classList
+	  && e.target.classList.contains(videoClass))){
 		return true; // Do not activate
 	}
 	if(e.altKey || e.metaKey){
@@ -277,7 +280,9 @@ function handleKeyDown(e){
 }
 
 function handleKeyOther(e){
-	if(!dirVideo && !e.target.classList.contains(videoClass)){
+	if(!dirVideo
+	&& !(e.target.classList
+	  && e.target.classList.contains(videoClass))){
 		return true; // Do not prevent default
 	}
 	if(e.altKey || e.metaKey){
