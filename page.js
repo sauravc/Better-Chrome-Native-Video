@@ -263,7 +263,9 @@ function handleDblClick(e){
 		return true; // Do not prevent default
 	}
 	shortcutFuncs.toggleFS(dirVideo || e.target);
-	return true; // Do not prevent default
+	e.preventDefault();
+	e.stopPropagation();
+	return false
 }
 
 function handleKeyDown(e){
