@@ -4,7 +4,7 @@ const videoClass = "chrome-better-HTML5-video",
       directVideoClass = "DIRECT-chrome-better-HTML5-video",
       ignoreVideoClass = "IGNORE-chrome-better-HTML5-video";
 
-var toggleChecked, toggleEnabled, observer, dirVideo, regVideos = [];
+let toggleChecked, toggleEnabled, observer, dirVideo, regVideos = [];
 
 const shortcutFuncs = {
 	toggleCaptions: function(v){
@@ -232,8 +232,7 @@ function registerAllValidVideos(vs){
 
 function unregisterAllVideos(){
 	for(let i = 0; i < regVideos.length; ++i){
-		const v = regVideos[i];
-		v.classList.remove(videoClass);
+		regVideos[i].classList.remove(videoClass);
 	}
 	regVideos = [];
 }

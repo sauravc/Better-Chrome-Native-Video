@@ -1,6 +1,6 @@
 "use strict";
 
-var lastSendResponse;
+let lastSendResponse;
 
 const toggleContextID = chrome.contextMenus.create({
 	type    : "checkbox",
