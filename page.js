@@ -256,6 +256,16 @@ function handleClick(e){
 	return true; // Do not prevent default
 }
 
+function handleDblClick(e){
+	if(!dirVideo
+	&& !(e.target.classList
+	  && e.target.classList.contains(videoClass))){
+		return true; // Do not prevent default
+	}
+	shortcutFuncs.toggleFS(dirVideo || e.target);
+	return true; // Do not prevent default
+}
+
 function handleKeyDown(e){
 	if(!dirVideo
 	&& !(e.target.classList
@@ -421,6 +431,7 @@ function enableExtension(){
 	document.addEventListener("contextmenu", updateContextTarget);
 	
 	document.addEventListener("click", handleClick);
+	document.addEventListener("dblclick", handleDblClick);
 	document.addEventListener("keydown", handleKeyDown);
 	document.addEventListener("keypress", handleKeyOther);
 	document.addEventListener("keyup", handleKeyOther);
@@ -450,6 +461,7 @@ function disableExtension(){
 	document.removeEventListener("contextmenu", updateContextTarget);
 	
 	document.removeEventListener("click", handleClick);
+	document.removeEventListener("dblclick", handleDblClick);
 	document.removeEventListener("keydown", handleKeyDown);
 	document.removeEventListener("keypress", handleKeyOther);
 	document.removeEventListener("keyup", handleKeyOther);
