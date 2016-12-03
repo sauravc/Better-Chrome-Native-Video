@@ -13,6 +13,7 @@ Note that this extension is only meant to affect Chrome's native HTML5 video pla
 | Keys              | Effects                                 |
 | ----------------- | --------------------------------------- |
 | Click             | Select video, Play/Pause selected video |
+| Double-Click / F  | Toggle fullscreen                       |
 | Space / K         | Play/Pause                              |
 | Left Arrow / J    | Skip back 5 seconds                     |
 |                   | *with Shift:* 10 seconds                |
@@ -33,4 +34,3 @@ Note that this extension is only meant to affect Chrome's native HTML5 video pla
 | Less Than (<)     | Slow down video playback                |
 | Greater Than (>)  | Speed up video playback                 |
 | Question Mark (?) | Return to default playback speed        |
-| F                 | Toggle fullscreen                       |
