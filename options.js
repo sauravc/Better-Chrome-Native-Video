@@ -1,6 +1,8 @@
 "use strict";
 
 const form = document.getElementById("form"),
+      dblFullScreen = form.elements["dblFullScreen"],
+      clickDelay = form.elements["clickDelay"],
       status = document.getElementById("status"),
       saveButton = document.getElementById("save"),
       resetButton = document.getElementById("reset"),
@@ -10,8 +12,13 @@ const form = document.getElementById("form"),
 const defaults = {
 	firstClick:    "focus",
 	dblFullScreen: true,
-	clickDelay:    0
+	clickDelay:    0.3
 };
+
+dblFullScreen.onchange = function(e){
+	console.log(e);
+	clickDelay.disabled = !dblFullScreen.checked;
+}
 
 let statusFadeTimeout;
 function statusFade() {
@@ -37,6 +44,7 @@ function showValues(values) {
 		} else {
 			e.value = values[key];
 		}
+		e.onchange && e.onchange();
 	}
 }
 

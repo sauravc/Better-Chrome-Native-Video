@@ -7,7 +7,7 @@ const videoClass = "chrome-better-HTML5-video",
 let toggleChecked, toggleEnabled, observer, dirVideo, settings = {
 	firstClick:    "focus",
 	dblFullScreen: true,
-	clickDelay:    0
+	clickDelay:    0.3
 };
 
 const shortcutFuncs = {
@@ -250,7 +250,7 @@ function handleClick(e){
 				clearTimeout(v.cbhtml5vsClickTimeout);
 				delete v.cbhtml5vsClickTimeout;
 			}
-			if(settings.clickDelay > 0){
+			if(settings.dblFullScreen && settings.clickDelay > 0){
 				v.cbhtml5vsClickTimeout = setTimeout(function(){
 					shortcutFuncs.togglePlay(v);
 					delete v.cbhtml5vsClickTimeout;
@@ -268,13 +268,17 @@ function handleClick(e){
 }
 
 function handleDblClick(e){
-	if(settings.dblFullScreen
-	&& !dirVideo
+	if(!settings.dblFullScreen || (!dirVideo
 	&& !(e.target.classList
-	  && e.target.classList.contains(videoClass))){
+	  && e.target.classList.contains(videoClass)))){
 		return true; // Do not prevent default
 	}
-	shortcutFuncs.toggleFS(dirVideo || e.target);
+	const v = dirVideo || e.target;
+	if(v.cbhtml5vsClickTimeout){
+		clearTimeout(v.cbhtml5vsClickTimeout);
+		delete v.cbhtml5vsClickTimeout;
+	}
+	shortcutFuncs.toggleFS(v);
 	e.preventDefault();
 	e.stopPropagation();
 	return false
