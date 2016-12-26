@@ -4,7 +4,11 @@ const videoClass = "chrome-better-HTML5-video",
       directVideoClass = "DIRECT-chrome-better-HTML5-video",
       ignoreVideoClass = "IGNORE-chrome-better-HTML5-video";
 
-let toggleChecked, toggleEnabled, observer, dirVideo, regVideos = [];
+let toggleChecked, toggleEnabled, observer, dirVideo, settings = {
+	firstClick:    "focus",
+	dblFullScreen: true,
+	clickDelay:    0
+};
 
 const shortcutFuncs = {
 	toggleCaptions: function(v){
@@ -19,12 +23,12 @@ const shortcutFuncs = {
 					// a marker to remember the old track. Use a
 					// listener to delete it if a different track
 					// is selected.
-					v.dataset.cbhtml5vsLastCaptionTrack = tt.label;
+					v.cbhtml5vsLastCaptionTrack = tt.label;
 					function cleanup(e){
 						for(let i = 0; i < v.textTracks.length; ++i){
 							const ott = v.textTracks[i];
 							if(ott.mode === "showing"){
-								delete v.dataset.cbhtml5vsLastCaptionTrack;
+								delete v.cbhtml5vsLastCaptionTrack;
 								v.textTracks.removeEventListener("change", cleanup);
 								return;
 							}
@@ -44,8 +48,8 @@ const shortcutFuncs = {
 		// Find the best one and select it.
 		validTracks.sort(function(a, b){
 			
-			if(v.dataset.cbhtml5vsLastCaptionTrack){
-				const lastLabel = v.dataset.cbhtml5vsLastCaptionTrack;
+			if(v.cbhtml5vsLastCaptionTrack){
+				const lastLabel = v.cbhtml5vsLastCaptionTrack;
 				
 				if(a.label === lastLabel && b.label !== lastLabel){
 					return -1;
@@ -211,12 +215,10 @@ function unregisterDirectVideo(reregister){
 }
 
 function registerVideo(v){
-	regVideos.push(v);
 	v.classList.add(videoClass);
 }
 
 function unregisterVideo(v){
-	regVideos.splice(regVideos.indexOf(v), 1);
 	v.classList.remove(videoClass);
 }
 
@@ -231,10 +233,10 @@ function registerAllValidVideos(vs){
 }
 
 function unregisterAllVideos(){
-	for(let i = 0; i < regVideos.length; ++i){
-		regVideos[i].classList.remove(videoClass);
+	const rv = document.getElementsByClassName(videoClass);
+	for(let i = 0; i < rv.length; ++i){
+		unregisterVideo(rv[i]);
 	}
-	regVideos = [];
 }
 
 function handleClick(e){
@@ -243,20 +245,31 @@ function handleClick(e){
 	}else if(e.target.classList
 	      && e.target.classList.contains(videoClass)){
 		const v = e.target;
-		if(document.activeElement === v){
-			shortcutFuncs.togglePlay(v);
-		}else{
-			v.focus();
-			e.preventDefault();
-			e.stopPropagation();
-			return false
+		if(settings.firstClick === "play" || document.activeElement === v){
+			if(v.cbhtml5vsClickTimeout){
+				clearTimeout(v.cbhtml5vsClickTimeout);
+				delete v.cbhtml5vsClickTimeout;
+			}
+			if(settings.clickDelay > 0){
+				v.cbhtml5vsClickTimeout = setTimeout(function(){
+					shortcutFuncs.togglePlay(v);
+					delete v.cbhtml5vsClickTimeout;
+				}, settings.clickDelay * 1000);
+			}else{
+				shortcutFuncs.togglePlay(v);
+			}
 		}
+		v.focus();
+		e.preventDefault();
+		e.stopPropagation();
+		return false
 	}
 	return true; // Do not prevent default
 }
 
 function handleDblClick(e){
-	if(!dirVideo
+	if(settings.dblFullScreen
+	&& !dirVideo
 	&& !(e.target.classList
 	  && e.target.classList.contains(videoClass))){
 		return true; // Do not prevent default
@@ -319,6 +332,10 @@ function handleFullscreen(){
 	}
 }
 
+function onMessage(obj){
+	settings = obj.updatedSettings || settings;
+}
+
 function updateContextTarget(e){
 	if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === "video"){
 		const target  = e.target,
@@ -330,7 +347,7 @@ function updateContextTarget(e){
 				toggleEnabled: enabled
 			}, function(response) {
 				if(!response){
-					console.log("Error while connecting:",
+					console.log("Error while updating context menu:",
 						chrome.runtime.lastError.message);
 					return;
 				}
@@ -426,6 +443,13 @@ function handleMutationRecords(mrs){
 }
 
 function enableExtension(){
+	chrome.storage.sync.get(settings, function(s){
+		settings = s || settings;
+		if (chrome.runtime.lastError) {
+			console.log("Error while loading settings:",
+				chrome.runtime.lastError.message);
+		}
+	});
 	document.addEventListener("webkitfullscreenchange", handleFullscreen);
 	document.addEventListener("mouseover", updateContextTarget);
 	document.addEventListener("mousedown", updateContextTarget);
@@ -436,6 +460,8 @@ function enableExtension(){
 	document.addEventListener("keydown", handleKeyDown);
 	document.addEventListener("keypress", handleKeyOther);
 	document.addEventListener("keyup", handleKeyOther);
+	
+	chrome.runtime.onMessage.addListener(onMessage);
 	
 	if(document.body.children.length === 1 // Handle direct video access
 	&& document.body.firstElementChild.tagName.toLowerCase() === "video"
@@ -466,6 +492,8 @@ function disableExtension(){
 	document.removeEventListener("keydown", handleKeyDown);
 	document.removeEventListener("keypress", handleKeyOther);
 	document.removeEventListener("keyup", handleKeyOther);
+	
+	chrome.runtime.onMessage.removeListener(onMessage);
 	
 	if(dirVideo) unregisterDirectVideo(false);
 	unregisterAllVideos();

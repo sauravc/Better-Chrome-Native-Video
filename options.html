@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>HTML5 Video Keyboard Shortcuts Options</title>
+	<style type="text/css">
+		fieldset {
+			margin: 0;
+			padding: 0;
+			border: none;
+		}
+		.item, #status {
+			border-radius: 5px;
+			padding: 5px;
+		}
+		.item {
+			margin: 0 0 10px 0;
+			background-color: rgba(0, 0, 0, .05);
+		}
+		.label, .input {
+			display: inline-block;
+			vertical-align: middle;
+			height: 1.5em;
+		}
+		.label, .comment {
+			padding-right: 10px;
+			text-align: right;
+			width: 60%;
+		}
+		.comment {
+			padding-top: 0.35em;
+			font-style: italic;
+			font-size: 90%;
+		}
+		input[type=radio] {
+			margin-left: -1px;
+			margin-bottom: 2px;
+		}
+		input[type=checkbox] {
+			margin-bottom: 2px;
+		}
+		input[type=number] {
+			max-width: 4em;
+		}
+		@keyframes fade {
+			from {opacity: 1;}
+			to   {opacity: 0;}
+		}
+		.fade {
+			animation: fade 3s;
+			opacity: 0;
+		}
+		.good {
+			background-color: #DFC;
+		}
+		.bad {
+			background-color: #FCC;
+		}
+		.wait {
+			background-color: #FFB;
+		}
+		button {
+			margin: 0 5px 0 0!important;
+		}
+		a {
+			cursor: pointer;
+		}
+		.crossed {
+			text-decoration: line-through;
+			pointer-events: none;
+			cursor: default;
+		}
+	</style>
+</head>
+<body>
+<fieldset disabled id="form">
+	<div class="item">
+		<label>
+			<div class="label">
+				Click once to focus, again to play
+			</div>
+			<div class="input">
+				<input name="firstClick" type="radio" value="focus"/>
+			</div>
+		</label>
+		<div class="comment">OR</div>
+		<label>
+			<div class="label">
+				Click once to both focus and play
+			</div>
+			<div class="input">
+				<input name="firstClick" type="radio" value="play"/>
+			</div>
+		</label>
+		<div class="comment">
+			The video with "focus" is the one that is affected
+			by keyboard shortcuts.
+		</div>
+	</div>
+	<div class="item">
+		<label>
+			<div class="label">
+				Fullscreen on double-click
+			</div>
+			<div class="input">
+				<input name="dblFullScreen" type="checkbox"/>
+			</div>
+		</label>
+	</div>
+	<div class="item">
+		<label>
+			<div class="label">
+				Click-to-play delay
+			</div>
+			<div class="input">
+				<input name="clickDelay" type="number"
+					min="0" max="10" step="any"/> seconds
+			</div>
+		</label>
+		<div class="comment">
+			Prevents double-click from quickly pausing and
+			unpausing the video.
+		</div>
+	</div>
+	<p id="status" class="wait">Loading...</p>
+	<button id="save">Save</button>
+	<button id="reset">Reset</button>
+	<a id="clearAll1">Clear all saved settings</a>
+	<a id="clearAll2" hidden>Sure?</a>
+	<a id="clearAll3" hidden>Really sure?</a>
+</fieldset>
+<script src="options.js"></script>
+</body>
+</html>
