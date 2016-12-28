@@ -240,15 +240,12 @@ function unregisterAllVideos(){
 }
 
 function handleClick(e){
-	let v;
-	if(dirVideo){
-		v = dirVideo;
-	}else if(e.target.classList
-	      && e.target.classList.contains(videoClass)){
-		v = e.target;
-	}else{
+	if(!dirVideo
+	&& !(e.target.classList
+	  && e.target.classList.contains(videoClass))){
 		return true; // Do not prevent default
 	}
+	const v = dirVideo || e.target;
 	if(settings.firstClick === "play" || document.activeElement === v){
 		if(v.cbhtml5vsClickTimeout){
 			clearTimeout(v.cbhtml5vsClickTimeout);
