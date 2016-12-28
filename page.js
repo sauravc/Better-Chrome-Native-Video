@@ -240,31 +240,33 @@ function unregisterAllVideos(){
 }
 
 function handleClick(e){
+	let v;
 	if(dirVideo){
-		shortcutFuncs.togglePlay(dirVideo);
+		v = dirVideo;
 	}else if(e.target.classList
 	      && e.target.classList.contains(videoClass)){
-		const v = e.target;
-		if(settings.firstClick === "play" || document.activeElement === v){
-			if(v.cbhtml5vsClickTimeout){
-				clearTimeout(v.cbhtml5vsClickTimeout);
-				delete v.cbhtml5vsClickTimeout;
-			}
-			if(settings.dblFullScreen && settings.clickDelay > 0){
-				v.cbhtml5vsClickTimeout = setTimeout(function(){
-					shortcutFuncs.togglePlay(v);
-					delete v.cbhtml5vsClickTimeout;
-				}, settings.clickDelay * 1000);
-			}else{
-				shortcutFuncs.togglePlay(v);
-			}
-		}
-		v.focus();
-		e.preventDefault();
-		e.stopPropagation();
-		return false
+		v = e.target;
+	}else{
+		return true; // Do not prevent default
 	}
-	return true; // Do not prevent default
+	if(settings.firstClick === "play" || document.activeElement === v){
+		if(v.cbhtml5vsClickTimeout){
+			clearTimeout(v.cbhtml5vsClickTimeout);
+			delete v.cbhtml5vsClickTimeout;
+		}
+		if(settings.dblFullScreen && settings.clickDelay > 0){
+			v.cbhtml5vsClickTimeout = setTimeout(function(){
+				shortcutFuncs.togglePlay(v);
+				delete v.cbhtml5vsClickTimeout;
+			}, settings.clickDelay * 1000);
+		}else{
+			shortcutFuncs.togglePlay(v);
+		}
+	}
+	v.focus();
+	e.preventDefault();
+	e.stopPropagation();
+	return false
 }
 
 function handleDblClick(e){
