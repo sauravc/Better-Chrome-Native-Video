@@ -15,9 +15,16 @@ const defaults = {
 	clickDelay:    0.3
 };
 
-dblFullScreen.onchange = function(e){
-	console.log(e);
-	clickDelay.disabled = !dblFullScreen.checked;
+dblFullScreen.onchange = function() {
+	setDisabled(clickDelay, !dblFullScreen.checked);
+}
+
+function setDisabled(input, disabled) {
+	input.disabled = disabled;
+	if (input.itemParent ||
+	   (input.itemParent = input.closest(".item"))) {
+		input.itemParent.classList[disabled ? "add" : "remove"]("disabled");
+	}
 }
 
 let statusFadeTimeout;
