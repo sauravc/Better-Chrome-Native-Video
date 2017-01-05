@@ -453,16 +453,17 @@ function enableExtension(){
 				chrome.runtime.lastError.message);
 		}
 	});
-	document.addEventListener("webkitfullscreenchange", handleFullscreen);
-	document.addEventListener("mouseover", updateContextTarget);
-	document.addEventListener("mousedown", updateContextTarget);
-	document.addEventListener("contextmenu", updateContextTarget);
+	// useCapture: Handler fired while event is bubbling down instead of up
+	document.addEventListener("webkitfullscreenchange", handleFullscreen, true);
+	document.addEventListener("mouseover", updateContextTarget, true);
+	document.addEventListener("mousedown", updateContextTarget, true);
+	document.addEventListener("contextmenu", updateContextTarget, true);
 	
-	document.addEventListener("click", handleClick);
-	document.addEventListener("dblclick", handleDblClick);
-	document.addEventListener("keydown", handleKeyDown);
-	document.addEventListener("keypress", handleKeyOther);
-	document.addEventListener("keyup", handleKeyOther);
+	document.addEventListener("click", handleClick, true);
+	document.addEventListener("dblclick", handleDblClick, true);
+	document.addEventListener("keydown", handleKeyDown, true);
+	document.addEventListener("keypress", handleKeyOther, true);
+	document.addEventListener("keyup", handleKeyOther, true);
 	
 	chrome.runtime.onMessage.addListener(onMessage);
 	
@@ -485,16 +486,16 @@ function enableExtension(){
 }
 
 function disableExtension(){
-	document.removeEventListener("webkitfullscreenchange", handleFullscreen);
-	document.removeEventListener("mouseover", updateContextTarget);
-	document.removeEventListener("mousedown", updateContextTarget);
-	document.removeEventListener("contextmenu", updateContextTarget);
+	document.removeEventListener("webkitfullscreenchange", handleFullscreen, true);
+	document.removeEventListener("mouseover", updateContextTarget, true);
+	document.removeEventListener("mousedown", updateContextTarget, true);
+	document.removeEventListener("contextmenu", updateContextTarget, true);
 	
-	document.removeEventListener("click", handleClick);
-	document.removeEventListener("dblclick", handleDblClick);
-	document.removeEventListener("keydown", handleKeyDown);
-	document.removeEventListener("keypress", handleKeyOther);
-	document.removeEventListener("keyup", handleKeyOther);
+	document.removeEventListener("click", handleClick, true);
+	document.removeEventListener("dblclick", handleDblClick, true);
+	document.removeEventListener("keydown", handleKeyDown, true);
+	document.removeEventListener("keypress", handleKeyOther, true);
+	document.removeEventListener("keyup", handleKeyOther, true);
 	
 	chrome.runtime.onMessage.removeListener(onMessage);
 	
