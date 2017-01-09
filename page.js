@@ -7,7 +7,10 @@ const videoClass = "chrome-better-HTML5-video",
 let toggleChecked, toggleEnabled, observer, dirVideo, settings = {
 	firstClick:    "focus",
 	dblFullScreen: true,
-	clickDelay:    0.3
+	clickDelay:    0.3,
+	skipNormal:    5,
+	skipShift:     10,
+	skipCtrl:      1,
 };
 
 const shortcutFuncs = {
@@ -99,20 +102,20 @@ const shortcutFuncs = {
 
 	skipLeft: function(v,key,shift,ctrl){
 		if(shift)
-			v.currentTime -= 10;
+			v.currentTime -= settings.skipShift;
 		else if(ctrl)
-			v.currentTime -= 1;
+			v.currentTime -= settings.skipCtrl;
 		else
-			v.currentTime -= 5;
+			v.currentTime -= settings.skipNormal;
 	},
 
 	skipRight: function(v,key,shift,ctrl){
 		if(shift)
-			v.currentTime += 10;
+			v.currentTime += settings.skipShift;
 		else if(ctrl)
-			v.currentTime += 1;
+			v.currentTime += settings.skipCtrl;
 		else
-			v.currentTime += 5;
+			v.currentTime += settings.skipNormal;
 	},
 
 	increaseVol: function(v){

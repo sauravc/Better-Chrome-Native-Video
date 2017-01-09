@@ -40,7 +40,7 @@
 			margin-bottom: 2px;
 		}
 		input[type=number] {
-			max-width: 4em;
+			max-width: 5em;
 		}
 		.disabled {
 			opacity: 0.5;
@@ -117,13 +117,39 @@
 			</div>
 			<div class="input">
 				<input name="clickDelay" type="number"
-					min="0" max="10" step="0.01"/> seconds
+					min="0" step="any"/> seconds
 			</div>
 		</label>
 		<div class="comment">
 			Prevents double-click from quickly pausing and
 			unpausing the video.
 		</div>
+	</div>
+	<div class="item">
+		<label>
+			<div class="label">
+				Arrow key skip amount
+			</div>
+			<div class="input">
+				<input name="skipNormal" type="number" step="any"/> seconds
+			</div>
+		</label>
+		<label>
+			<div class="label">
+				<em>while holding Shift</em>
+			</div>
+			<div class="input">
+				<input name="skipShift" type="number" step="any"/> seconds
+			</div>
+		</label>
+		<label>
+			<div class="label">
+				<em>while holding Ctrl</em>
+			</div>
+			<div class="input">
+				<input name="skipCtrl" type="number" step="any"/> seconds
+			</div>
+		</label>
 	</div>
 	<p id="status" class="wait">Loading...</p>
 	<button id="save">Save</button>

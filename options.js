@@ -12,7 +12,10 @@ const form = document.getElementById("form"),
 const defaults = {
 	firstClick:    "focus",
 	dblFullScreen: true,
-	clickDelay:    0.3
+	clickDelay:    0.3,
+	skipNormal:    5,
+	skipShift:     10,
+	skipCtrl:      1,
 };
 
 dblFullScreen.onchange = function() {
