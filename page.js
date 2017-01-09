@@ -246,7 +246,7 @@ function handleClick(e){
 		return true; // Do not prevent default
 	}
 	const v = dirVideo || e.target;
-	if(settings.firstClick === "play" || document.activeElement === v){
+	if(settings.firstClick === "play" || dirVideo || document.activeElement === v){
 		if(v.cbhtml5vsClickTimeout){
 			clearTimeout(v.cbhtml5vsClickTimeout);
 			delete v.cbhtml5vsClickTimeout;
