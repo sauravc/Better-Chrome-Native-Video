@@ -4,18 +4,53 @@
 	<meta charset="UTF-8">
 	<title>HTML5 Video Keyboard Shortcuts Options</title>
 	<style type="text/css">
+		body {
+			background-color: #FFF;
+			width: 100%;
+			height: 100%;
+			box-sizing: border-box;
+			margin: 0;
+			padding: 14px;
+		}
 		fieldset {
 			margin: 0;
 			padding: 0;
 			border: none;
+		}
+		.options {
+			overflow-y: auto;
+			max-height: 200px;
+			background:
+				/* Shadow covers */
+				linear-gradient(white 30%, rgba(255,255,255,0)),
+				linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+				
+				/* Shadows */
+				radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
+				radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+			background-repeat: no-repeat;
+			background-color: white;
+			background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+			background-attachment: local, local, scroll, scroll;
+		}
+		.options::-webkit-scrollbar {
+			width: 10px;
+		}
+		.options::-webkit-scrollbar-thumb {
+			background-color: rgba(0, 0, 0, .6);
+			border-left: 5px solid #FFF;
+			border-radius: 10px;
 		}
 		.item, #status {
 			border-radius: 5px;
 			padding: 5px;
 		}
 		.item {
-			margin: 0 0 10px 0;
+			margin: 0;
 			background-color: rgba(0, 0, 0, .05);
+		}
+		.item + .item {
+			margin-top: 10px;
 		}
 		.label, .input {
 			display: inline-block;
@@ -77,79 +112,104 @@
 </head>
 <body>
 <fieldset disabled id="form">
-	<div class="item" title="Default: Once to focus, again to play">
-		<label>
-			<div class="label">
-				Click once to focus, again to play
+	<div class="options">
+		<div class="item" title="Default: Once to focus, again to play">
+			<label>
+				<div class="label">
+					Click once to focus, again to play
+				</div>
+				<div class="input">
+					<input name="firstClick" type="radio" value="focus"/>
+				</div>
+			</label>
+			<div class="comment">OR</div>
+			<label>
+				<div class="label">
+					Click once to both focus and play
+				</div>
+				<div class="input">
+					<input name="firstClick" type="radio" value="play"/>
+				</div>
+			</label>
+			<div class="comment">
+				The video with "focus" is the one that is affected
+				by keyboard shortcuts.
 			</div>
-			<div class="input">
-				<input name="firstClick" type="radio" value="focus"/>
-			</div>
-		</label>
-		<div class="comment">OR</div>
-		<label>
-			<div class="label">
-				Click once to both focus and play
-			</div>
-			<div class="input">
-				<input name="firstClick" type="radio" value="play"/>
-			</div>
-		</label>
-		<div class="comment">
-			The video with "focus" is the one that is affected
-			by keyboard shortcuts.
 		</div>
-	</div>
-	<div class="item" title="Default: On">
-		<label>
-			<div class="label">
-				Fullscreen on double-click
-			</div>
-			<div class="input">
-				<input name="dblFullScreen" type="checkbox"/>
-			</div>
-		</label>
-	</div>
-	<div class="item" title="Default: 0.3 seconds">
-		<label>
-			<div class="label">
-				Click-to-play delay
-			</div>
-			<div class="input">
-				<input name="clickDelay" type="number"
-					min="0" step="any"/> seconds
-			</div>
-		</label>
-		<div class="comment">
-			Prevents double-click from quickly pausing and
-			unpausing the video.
+		<div class="item" title="Default: On">
+			<label>
+				<div class="label">
+					Fullscreen on double-click
+				</div>
+				<div class="input">
+					<input name="dblFullScreen" type="checkbox"/>
+				</div>
+			</label>
 		</div>
-	</div>
-	<div class="item">
-		<label title="Default: 5 seconds">
-			<div class="label">
-				Arrow key skip amount
+		<div class="item" title="Default: 0.3 seconds">
+			<label>
+				<div class="label">
+					Click-to-play delay
+				</div>
+				<div class="input">
+					<input name="clickDelay" type="number"
+						min="0" step="any"/> seconds
+				</div>
+			</label>
+			<div class="comment">
+				Prevents double-click from quickly pausing and
+				unpausing the video.
 			</div>
-			<div class="input">
-				<input name="skipNormal" type="number" step="any"/> seconds
+			<div class="comment">
+				Should be slightly longer than your longest
+				double-click.
 			</div>
-		</label>
-		<label title="Default: 10 seconds">
-			<div class="label">
-				<em>while holding Shift</em>
+		</div>
+		<div class="item">
+			<label title="Default: 5 seconds">
+				<div class="label">
+					Arrow key skip amount
+				</div>
+				<div class="input">
+					<input name="skipNormal" type="number" step="any"/> seconds
+				</div>
+			</label>
+			<label title="Default: 10 seconds">
+				<div class="label">
+					<em>while holding Shift</em>
+				</div>
+				<div class="input">
+					<input name="skipShift" type="number" step="any"/> seconds
+				</div>
+			</label>
+			<label title="Default: 1 second">
+				<div class="label">
+					<em>while holding Ctrl</em>
+				</div>
+				<div class="input">
+					<input name="skipCtrl" type="number" step="any"/> seconds
+				</div>
+			</label>
+		</div>
+		<div class="item" title="Default: Off">
+			<label>
+				<div class="label">
+					Allow shortcuts on videos that do not use the
+					default controls
+				</div>
+				<div class="input">
+					<input name="allowWOControls" type="checkbox"/>
+				</div>
+			</label>
+			<div class="comment">
+				Shortcuts will still be off by default for these videos,
+				and can be enabled through the right-click menu.
 			</div>
-			<div class="input">
-				<input name="skipShift" type="number" step="any"/> seconds
+			<div class="comment">
+				This option is for advanced users, as it may conflict with
+				some websites.
 			</div>
-		</label>
-		<label title="Default: 1 second">
-			<div class="label">
-				<em>while holding Ctrl</em>
-			</div>
-			<div class="input">
-				<input name="skipCtrl" type="number" step="any"/> seconds
-			</div>
-		</label>
+		</div>
 	</div>
 	<p id="status" class="wait">Loading...</p>
 	<button id="save">Save</button>

@@ -10,12 +10,13 @@ const form = document.getElementById("form"),
       clearAll2 = document.getElementById("clearAll2"),
       clearAll3 = document.getElementById("clearAll3");
 const defaults = {
-	firstClick:    "focus",
-	dblFullScreen: true,
-	clickDelay:    0.3,
-	skipNormal:    5,
-	skipShift:     10,
-	skipCtrl:      1,
+	firstClick:      "focus",
+	dblFullScreen:   true,
+	clickDelay:      0.3,
+	skipNormal:      5,
+	skipShift:       10,
+	skipCtrl:        1,
+	allowWOControls: false,
 };
 
 dblFullScreen.onchange = function() {

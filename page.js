@@ -1,16 +1,16 @@
 "use strict";
 
-const videoClass = "chrome-better-HTML5-video",
-      directVideoClass = "DIRECT-chrome-better-HTML5-video",
-      ignoreVideoClass = "IGNORE-chrome-better-HTML5-video";
+const videoAttribute = "chromeBetterHtml5VideoType",
+      timeoutAttribute = "chromeBetterHtml5VideoClickTimeout";
 
 let toggleChecked, toggleEnabled, observer, dirVideo, settings = {
-	firstClick:    "focus",
-	dblFullScreen: true,
-	clickDelay:    0.3,
-	skipNormal:    5,
-	skipShift:     10,
-	skipCtrl:      1,
+	firstClick:      "focus",
+	dblFullScreen:   true,
+	clickDelay:      0.3,
+	skipNormal:      5,
+	skipShift:       10,
+	skipCtrl:        1,
+	allowWOControls: false,
 };
 
 const shortcutFuncs = {
@@ -199,65 +199,70 @@ const keyFuncs = {
 	57 : shortcutFuncs.toPercentage,    // 9
 };
 
-function registerDirectVideo(v){
-	unregisterAllVideos();
+function registerDirectVideo(v, force){
+	ignoreAllIndirectVideos();
 	if(dirVideo){
-		unregisterDirectVideo(v !== dirVideo);
+		ignoreDirectVideo();
 	}
-	dirVideo = v;
-	v.classList.add(directVideoClass);
+	if(force !== undefined ? force : v.hasAttribute("controls")){
+		dirVideo = v;
+		v.dataset[videoAttribute] = "direct";
+	}else{
+		v.dataset[videoAttribute] = "";
+	}
 }
 
-function unregisterDirectVideo(reregister){
-	dirVideo.classList.remove(directVideoClass);
+function ignoreDirectVideo(reregister){
 	if(reregister && document.body.contains(dirVideo)){
 		registerVideo(dirVideo);
 		dirVideo.focus();
+	}else{
+		dirVideo.dataset[videoAttribute] = "";
 	}
 	dirVideo = undefined;
 }
 
-function registerVideo(v){
-	v.classList.add(videoClass);
+function registerVideo(v, force){
+	v.dataset[videoAttribute] =
+		(force !== undefined ? force : v.hasAttribute("controls")) ?
+		"normal" : "";
 }
 
-function unregisterVideo(v){
-	v.classList.remove(videoClass);
+function ignoreVideo(v){
+	v.dataset[videoAttribute] = "";
 }
 
-function registerAllValidVideos(vs){
-	for(let i = 0; i < vs.length; ++i){
-		if(vs[i].hasAttribute("controls")
-		&&!vs[i].classList.contains(videoClass)
-		&&!vs[i].classList.contains(ignoreVideoClass)){
+function registerAllNewVideos(vs){
+	for(let i = vs.length - 1; i >= 0; --i){
+		if(vs[i].dataset[videoAttribute] === undefined){
 			registerVideo(vs[i]);
 		}
 	}
 }
 
-function unregisterAllVideos(){
-	const rv = document.getElementsByClassName(videoClass);
-	for(let i = 0; i < rv.length; ++i){
-		unregisterVideo(rv[i]);
+function ignoreAllIndirectVideos(){
+	const rv = document.getElementsByTagName("video");
+	for(let i = rv.length - 1; i >= 0; --i){
+		if(rv[i] !== dirVideo) ignoreVideo(rv[i]);
 	}
 }
 
 function handleClick(e){
 	if(!dirVideo
-	&& !(e.target.classList
-	  && e.target.classList.contains(videoClass))){
+	&& !(e.target.dataset
+	  && e.target.dataset[videoAttribute])){
 		return true; // Do not prevent default
 	}
 	const v = dirVideo || e.target;
 	if(settings.firstClick === "play" || dirVideo || document.activeElement === v){
-		if(v.cbhtml5vsClickTimeout){
-			clearTimeout(v.cbhtml5vsClickTimeout);
-			delete v.cbhtml5vsClickTimeout;
+		if(v.dataset[timeoutAttribute]){
+			clearTimeout(v.dataset[timeoutAttribute]|0);
+			delete v.dataset[timeoutAttribute];
 		}
 		if(settings.dblFullScreen && settings.clickDelay > 0){
-			v.cbhtml5vsClickTimeout = setTimeout(function(){
+			v.dataset[timeoutAttribute] = setTimeout(function(){
 				shortcutFuncs.togglePlay(v);
-				delete v.cbhtml5vsClickTimeout;
+				delete v.dataset[timeoutAttribute];
 			}, settings.clickDelay * 1000);
 		}else{
 			shortcutFuncs.togglePlay(v);
@@ -271,14 +276,14 @@ function handleClick(e){
 
 function handleDblClick(e){
 	if(!settings.dblFullScreen || (!dirVideo
-	&& !(e.target.classList
-	  && e.target.classList.contains(videoClass)))){
+	&& !(e.target.dataset
+	  && e.target.dataset[videoAttribute]))){
 		return true; // Do not prevent default
 	}
 	const v = dirVideo || e.target;
-	if(v.cbhtml5vsClickTimeout){
-		clearTimeout(v.cbhtml5vsClickTimeout);
-		delete v.cbhtml5vsClickTimeout;
+	if(v.dataset[timeoutAttribute]){
+		clearTimeout(v.dataset[timeoutAttribute]|0);
+		delete v.dataset[timeoutAttribute];
 	}
 	shortcutFuncs.toggleFS(v);
 	e.preventDefault();
@@ -288,8 +293,8 @@ function handleDblClick(e){
 
 function handleKeyDown(e){
 	if(!dirVideo
-	&& !(e.target.classList
-	  && e.target.classList.contains(videoClass))){
+	&& !(e.target.dataset
+	  && e.target.dataset[videoAttribute])){
 		return true; // Do not activate
 	}
 	if(e.altKey || e.metaKey){
@@ -311,9 +316,9 @@ function handleKeyDown(e){
 
 function handleKeyOther(e){
 	if(!dirVideo
-	&& !(e.target.classList
-	  && e.target.classList.contains(videoClass))){
-		return true; // Do not prevent default
+	&& !(e.target.dataset
+	  && e.target.dataset[videoAttribute])){
+		return true; // Do not activate
 	}
 	if(e.altKey || e.metaKey){
 		return true; // Do not prevent default
@@ -333,7 +338,7 @@ function handleKeyOther(e){
 
 function handleFullscreen(){
 	if(document.webkitFullscreenElement
-	&& document.webkitFullscreenElement.classList.contains(videoClass)){
+	&& document.webkitFullscreenElement.dataset[videoAttribute]){
 		document.webkitFullscreenElement.focus();
 	}
 }
@@ -343,10 +348,10 @@ function onMessage(obj){
 }
 
 function updateContextTarget(e){
-	if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === "video"){
+	if(e.target && e.target.dataset && videoAttribute in e.target.dataset){
 		const target  = e.target,
-		      checked = target.classList.contains(ignoreVideoClass),
-		      enabled = target.hasAttribute("controls");
+		      checked = target.dataset[videoAttribute] === "",
+		      enabled = settings.allowWOControls || target.hasAttribute("controls");
 		if(toggleChecked !== checked || toggleEnabled !== enabled){
 			chrome.runtime.sendMessage({
 				toggleChecked: checked,
@@ -359,23 +364,21 @@ function updateContextTarget(e){
 				}
 				if(response.clicked){
 					if(response.ignoreVideo){
-						if(target.classList.contains(directVideoClass)){
-							unregisterDirectVideo(false);
+						switch(target.dataset[videoAttribute]){
+						case "direct":
+							ignoreDirectVideo();
+							break;
+						case "normal":
+							ignoreVideo(target);
+							break;
 						}
-						if(target.classList.contains(videoClass)){
-							unregisterVideo(target);
-						}
-						target.classList.add(ignoreVideoClass);
 					}else{
-						target.classList.remove(ignoreVideoClass);
-						if(target.hasAttribute("controls")){
-							if(document.body.children.length === 1
-							&& document.body.firstElementChild === target){
-								registerDirectVideo(target);
-							}else{
-								registerVideo(target);
-								target.focus();
-							}
+						if(document.body.children.length === 1
+						&& document.body.firstElementChild === target){
+							registerDirectVideo(target, true);
+						}else{
+							registerVideo(target, true);
+							target.focus();
 						}
 					}
 				}
@@ -387,17 +390,19 @@ function updateContextTarget(e){
 }
 
 function handleMutationRecords(mrs){
-	for(let i = 0; i < mrs.length; ++i){
-		if(mrs[i].type === "attributes" && mrs[i].attributeName === "controls"){
+	for(let i = mrs.length - 1; i >= 0; --i){
+		if(mrs[i].attributeName === "controls"){
 			const t = mrs[i].target;
 			if(!t.hasAttribute("controls")){
-				if(t.classList.contains(directVideoClass)){
-					unregisterDirectVideo(false);
-				}else if(t.classList.contains(videoClass)){
-					unregisterVideo(t);
+				switch(t.dataset[videoAttribute]){
+				case "direct":
+					ignoreDirectVideo(false);
+					break;
+				case "normal":
+					ignoreVideo(t);
+					break;
 				}
-			}else if(t.tagName.toLowerCase() === "video"
-			&&      !t.classList.contains(ignoreVideoClass)){
+			}else if(t.tagName.toLowerCase() === "video"){
 				if(document.body.children.length === 1
 				&& document.body.firstElementChild === t){
 					registerDirectVideo(t);
@@ -407,40 +412,33 @@ function handleMutationRecords(mrs){
 				}
 			}
 		}else if(mrs[i].type === "childList"){
-			// Handle direct video access
 			if(dirVideo && (document.body.children.length !== 1
 			|| document.body.firstElementChild !== dirVideo)){
-				unregisterDirectVideo(true);
+				ignoreDirectVideo(true);
+			}
+			if(mrs[i].removedNodes){
+				for(let j = mrs[i].removedNodes.length - 1; j >= 0; --j){
+					if(mrs[i].removedNodes[j] === dirVideo){
+						ignoreDirectVideo();
+					}
+					// No need to ignore other videos currently,
+					// as it's just setting an attribute.
+				}
 			}
 			if(document.body.children.length === 1
+			&& document.body.firstElementChild !== dirVideo
 			&& document.body.firstElementChild.tagName.toLowerCase() === "video"
-			&& document.body.firstElementChild.hasAttribute("controls")
-			&&!document.body.firstElementChild.classList.contains(ignoreVideoClass)
-			&&!document.body.firstElementChild.classList.contains(directVideoClass)){
+			&& document.body.firstElementChild.dataset[videoAttribute] !== ""){
 				registerDirectVideo(document.body.firstElementChild);
 			}else if(mrs[i].addedNodes){
-				for(let j = 0; j < mrs[i].addedNodes.length; ++j){
+				for(let j = mrs[i].addedNodes.length - 1; j >= 0; --j){
 					const an = mrs[i].addedNodes[j];
 					if(an.tagName && an.tagName.toLowerCase() === "video"){
-						if(an.hasAttribute("controls")
-						&&!an.classList.contains(videoClass)
-						&&!an.classList.contains(ignoreVideoClass)){
+						if(an.dataset[videoAttribute] === undefined){
 							registerVideo(an);
 						}
 					}else if(an.getElementsByTagName){
-						registerAllValidVideos(an.getElementsByTagName("video"));
-					}
-				}
-			}
-			if(mrs[i].removedNodes){
-				for(let j = 0; j < mrs[i].removedNodes.length; ++j){
-					const rn = mrs[i].removedNodes[j];
-					if(rn.classList){
-						if(rn.classList.contains(videoClass)){
-							unregisterVideo(rn);
-						}else if(rn.classList.contains(directVideoClass)){
-							unregisterDirectVideo(false);
-						}
+						registerAllNewVideos(an.getElementsByTagName("video"));
 					}
 				}
 			}
@@ -470,22 +468,21 @@ function enableExtension(){
 	
 	chrome.runtime.onMessage.addListener(onMessage);
 	
-	if(document.body.children.length === 1 // Handle direct video access
-	&& document.body.firstElementChild.tagName.toLowerCase() === "video"
-	&& document.body.firstElementChild.hasAttribute("controls")
-	&&!document.body.firstElementChild.classList.contains(ignoreVideoClass)){
-		registerDirectVideo(document.body.firstElementChild);
-	}else{
-		registerAllValidVideos(document.getElementsByTagName("video"));
-	}
-	
 	observer = observer || new MutationObserver(handleMutationRecords);
-	observer.observe(document.documentElement, {
+	observer.observe(document.body, {
 		childList: true,
 		attributes: true,
 		attributeFilter: ["controls"],
 		subtree: true
 	});
+	
+	if(document.body.children.length === 1
+	&& document.body.firstElementChild.tagName.toLowerCase() === "video"
+	&& document.body.firstElementChild.dataset[videoAttribute] !== ""){
+		registerDirectVideo(document.body.firstElementChild);
+	}else{
+		registerAllNewVideos(document.getElementsByTagName("video"));
+	}
 }
 
 function disableExtension(){
@@ -502,13 +499,10 @@ function disableExtension(){
 	
 	chrome.runtime.onMessage.removeListener(onMessage);
 	
-	if(dirVideo) unregisterDirectVideo(false);
-	unregisterAllVideos();
-	
 	if(observer) observer.disconnect();
+	
+	if(dirVideo) ignoreDirectVideo();
+	ignoreAllIndirectVideos();
 }
 
-if(document.readyState !== "loading")
-	enableExtension();
-else
-	window.addEventListener("load", enableExtension);
+enableExtension();
