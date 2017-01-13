@@ -10,7 +10,7 @@
 			height: 100%;
 			box-sizing: border-box;
 			margin: 0;
-			padding: 14px;
+			padding: 14px 17px;
 		}
 		fieldset {
 			margin: 0;
@@ -19,7 +19,8 @@
 		}
 		.options {
 			overflow-y: auto;
-			max-height: 200px;
+			height: 300px;
+			resize: both;
 			background:
 				/* Shadow covers */
 				linear-gradient(white 30%, rgba(255,255,255,0)),
@@ -35,11 +36,17 @@
 		}
 		.options::-webkit-scrollbar {
 			width: 10px;
+			background: #FFF;
 		}
 		.options::-webkit-scrollbar-thumb {
-			background-color: rgba(0, 0, 0, .6);
+			background: rgba(0, 0, 0, .6);
 			border-left: 5px solid #FFF;
 			border-radius: 10px;
+		}
+		.options::-webkit-resizer {
+			width: 10px;
+			height: 10px;
+			background: linear-gradient(-45deg, rgba(0,0,0,.7) 5px, #FFF 5px);
 		}
 		.item, #status {
 			border-radius: 5px;
