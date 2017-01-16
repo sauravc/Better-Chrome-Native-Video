@@ -36,12 +36,18 @@
 		}
 		.options::-webkit-scrollbar {
 			width: 10px;
+			height: 10px;
 			background: #FFF;
 		}
 		.options::-webkit-scrollbar-thumb {
 			background: rgba(0, 0, 0, .6);
-			border-left: 5px solid #FFF;
 			border-radius: 10px;
+		}
+		.options::-webkit-scrollbar-thumb:vertical {
+			border-left: 5px solid #FFF;
+		}
+		.options::-webkit-scrollbar-thumb:horizontal {
+			border-top: 5px solid #FFF;
 		}
 		.options::-webkit-resizer {
 			width: 10px;
@@ -59,6 +65,16 @@
 		.item + .item {
 			margin-top: 10px;
 		}
+		.inputwrapper {
+			display: inline-block;
+			white-space: nowrap;
+		}
+		.inputwrapper * {
+			white-space: normal;
+		}
+		.input {
+			white-space: nowrap;
+		}
 		.label, .input {
 			display: inline-block;
 			vertical-align: middle;
@@ -67,7 +83,7 @@
 		.label, .comment {
 			padding-right: 10px;
 			text-align: right;
-			width: 60%;
+			width: 225px;
 		}
 		.comment {
 			padding-top: 0.35em;
@@ -121,7 +137,7 @@
 <fieldset disabled id="form">
 	<div class="options">
 		<div class="item" title="Default: Once to focus, again to play">
-			<label>
+			<label class="inputwrapper">
 				<div class="label">
 					Click once to focus, again to play
 				</div>
@@ -130,7 +146,7 @@
 				</div>
 			</label>
 			<div class="comment">OR</div>
-			<label>
+			<label class="inputwrapper">
 				<div class="label">
 					Click once to both focus and play
 				</div>
@@ -144,7 +160,7 @@
 			</div>
 		</div>
 		<div class="item" title="Default: On">
-			<label>
+			<label class="inputwrapper">
 				<div class="label">
 					Fullscreen on double-click
 				</div>
@@ -154,7 +170,7 @@
 			</label>
 		</div>
 		<div class="item" title="Default: 0.3 seconds">
-			<label>
+			<label class="inputwrapper">
 				<div class="label">
 					Click-to-play delay
 				</div>
@@ -173,7 +189,7 @@
 			</div>
 		</div>
 		<div class="item">
-			<label title="Default: 5 seconds">
+			<label class="inputwrapper" title="Default: 5 seconds">
 				<div class="label">
 					Arrow key skip amount
 				</div>
@@ -181,7 +197,7 @@
 					<input name="skipNormal" type="number" step="any"/> seconds
 				</div>
 			</label>
-			<label title="Default: 10 seconds">
+			<label class="inputwrapper" title="Default: 10 seconds">
 				<div class="label">
 					<em>while holding Shift</em>
 				</div>
@@ -189,7 +205,7 @@
 					<input name="skipShift" type="number" step="any"/> seconds
 				</div>
 			</label>
-			<label title="Default: 1 second">
+			<label class="inputwrapper" title="Default: 1 second">
 				<div class="label">
 					<em>while holding Ctrl</em>
 				</div>
@@ -199,7 +215,7 @@
 			</label>
 		</div>
 		<div class="item" title="Default: Off">
-			<label>
+			<label class="inputwrapper">
 				<div class="label">
 					Allow shortcuts on videos that do not use the
 					default controls
