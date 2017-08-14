@@ -1,6 +1,7 @@
 "use strict";
 
 const form = document.getElementById("form"),
+      fieldset = document.getElementById("fieldset"),
       dblFullScreen = form.elements["dblFullScreen"],
       clickDelay = form.elements["clickDelay"],
       status = document.getElementById("status"),
@@ -18,6 +19,11 @@ const defaults = {
 	skipCtrl:        1,
 	allowWOControls: false,
 };
+
+form.onsubmit = function() {
+	// Stop the page from reloading.
+	return false;
+}
 
 dblFullScreen.onchange = function() {
 	setDisabled(clickDelay, !dblFullScreen.checked);
@@ -161,5 +167,5 @@ chrome.storage.sync.get(defaults, function(values) {
 			setStatus("Error while loading settings!", "bad");
 		}
 	}
-	form.disabled = false;
+	fieldset.disabled = false;
 });
