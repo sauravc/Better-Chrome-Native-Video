@@ -247,10 +247,17 @@ function ignoreAllIndirectVideos(){
 	}
 }
 
+function isValidTarget(el){
+	return (
+		(dirVideo && (el === dirVideo
+		           || el === document.body
+		           || el === document.documentElement))
+		|| (el.dataset && el.dataset[videoAttribute])
+	);
+}
+
 function handleClick(e){
-	if(!dirVideo
-	&& !(e.target.dataset
-	  && e.target.dataset[videoAttribute])){
+	if(!isValidTarget(e.target)){
 		return true; // Do not prevent default
 	}
 	const v = dirVideo || e.target;
@@ -275,9 +282,7 @@ function handleClick(e){
 }
 
 function handleDblClick(e){
-	if(!settings.dblFullScreen || (!dirVideo
-	&& !(e.target.dataset
-	  && e.target.dataset[videoAttribute]))){
+	if(!(settings.dblFullScreen && isValidTarget(e.target))){
 		return true; // Do not prevent default
 	}
 	const v = dirVideo || e.target;
@@ -292,12 +297,7 @@ function handleDblClick(e){
 }
 
 function handleKeyDown(e){
-	if(!dirVideo
-	&& !(e.target.dataset
-	  && e.target.dataset[videoAttribute])){
-		return true; // Do not activate
-	}
-	if(e.altKey || e.metaKey){
+	if(!isValidTarget(e.target) || e.altKey || e.metaKey){
 		return true; // Do not activate
 	}
 	const func = keyFuncs[e.keyCode];
@@ -315,12 +315,7 @@ function handleKeyDown(e){
 }
 
 function handleKeyOther(e){
-	if(!dirVideo
-	&& !(e.target.dataset
-	  && e.target.dataset[videoAttribute])){
-		return true; // Do not activate
-	}
-	if(e.altKey || e.metaKey){
+	if(!isValidTarget(e.target) || e.altKey || e.metaKey){
 		return true; // Do not prevent default
 	}
 	const func = keyFuncs[e.keyCode];
