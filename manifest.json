@@ -5,7 +5,7 @@
 	"short_name": "__MSG_shrtExtName__",
 	"default_locale": "en",
 	"description": "__MSG_extDesc__",
-	"version": "4.1.1",
+	"version": "4.1.2",
 	
 	"icons": {
 		"16": "icon16.png",
