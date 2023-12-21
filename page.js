@@ -353,7 +353,7 @@ function handleKeyDown(e){
 		return true; // Do not activate
 	}
 	const func = keyFuncs[e.keyCode];
-        recordClickAndGetClickCount(key);
+        recordClickAndGetClickCount(e.keyCode);
 	if(func){
 		if((func.length < 3 && e.shiftKey) ||
 		   (func.length < 4 && e.ctrlKey)){
