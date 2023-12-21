@@ -30,16 +30,16 @@ function recordClickAndGetClickCount(key) {
 		// Reset
         	prevKeyPressed = key;
 		prevKeyPressedTime = Date.now();
-		prevKeyClickCount = 0;
-	} else if (Date.now() - prevKeyPressedTime < clickDelay * 1000) {
+		prevKeyClickCount = 1;
+	} else if (Date.now() - prevKeyPressedTime < settings.clickDelay * 1000) {
 		// We have a quick subsequent click
 		prevKeyPressedTime = Date.now();
 		prevKeyClickCount = prevKeyClickCount + 1;
 	} else {
 		// Reset
-        	prevKeyPressed = key;
+                prevKeyPressed = key;
 		prevKeyPressedTime = Date.now();
-		prevKeyClickCount = 0;
+		prevKeyClickCount = 1;
 	}
 	return prevKeyClickCount;
 }
