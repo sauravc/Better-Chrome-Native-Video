@@ -13,9 +13,41 @@ let toggleChecked, toggleEnabled, observer, dirVideo, settings = {
 	allowWOControls: false,
 };
 
+
+//
+// BEGIN: THIS IS FOR DOUBLE/TRIPLE CLICKING KEYS
+//
+var prevKeyPressed = 0;  // Meaningless initial value.
+var prevKeyPressedTime = 0;  // Meaningless initial value.
+var prevKeyClickCount = 0;  // Used for tracking double/triple key clicks
+
+function getClickCount(key) {
+	return prevKeyClickCount;
+}
+
+function recordClickAndGetClickCount(key) {
+	if (key != prevKeyPressed) {
+		// Reset
+        	prevKeyPressed = key;
+		prevKeyPressedTime = Date.now();
+		prevKeyClickCount = 0;
+	} else if (Date.now() - prevKeyPressedTime < clickDelay * 1000) {
+		// We have a quick subsequent click
+		prevKeyPressedTime = Date.now();
+		prevKeyClickCount = prevKeyClickCount + 1;
+	} else {
+		// Reset
+        	prevKeyPressed = key;
+		prevKeyPressedTime = Date.now();
+		prevKeyClickCount = 0;
+	}
+	return prevKeyClickCount;
+}
+//
+// END: THIS IS FOR DOUBLE/TRIPLE CLICKING KEYS
+//
+
 const shortcutFuncs = {
-	prevKeyPressed: 0,  // Meaningless value. Doesn't map to anything
-	prevKeyPressedTime: 0, // Meaningless value
 	toggleCaptions: function(v){
 		const validTracks = [];
 		for(let i = 0; i < v.textTracks.length; ++i){
@@ -42,7 +74,7 @@ const shortcutFuncs = {
 					v.textTracks.addEventListener("change", cleanup);
 				}
 				return;
-			}else if(tt.mode !== "hidden"){
+			} else if(tt.mode !== "hidden"){
 				validTracks.push(tt);
 			}
 		}
@@ -167,12 +199,14 @@ const shortcutFuncs = {
 	},
 
 	toPercentage: function(v,key){
+		var clickCount = getClickCount(key);
+		var multiClickExtraSkip = v.duration / 100.0 * Math.min(clickCount - 1 , 10.0);
 		if(48 <= key && key <= 57) {
 			// Main keyboard numbers
-			v.currentTime = v.duration * (key - 48) / 10.0;
+			v.currentTime = v.duration * (key - 48) / 10.0 + multiClickExtraSkip;
 		} else if (96 <= key && key <= 105) {
 			// Numpad numbers
-			v.currentTime = v.duration * (key - 96) / 10.0;
+			v.currentTime = v.duration * (key - 96) / 10.0 + multiClickExtraSkip;
 		}
 	},
 };
@@ -319,6 +353,7 @@ function handleKeyDown(e){
 		return true; // Do not activate
 	}
 	const func = keyFuncs[e.keyCode];
+        recordClickAndGetClickCount(key);
 	if(func){
 		if((func.length < 3 && e.shiftKey) ||
 		   (func.length < 4 && e.ctrlKey)){
