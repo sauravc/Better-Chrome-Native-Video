@@ -14,6 +14,8 @@ let toggleChecked, toggleEnabled, observer, dirVideo, settings = {
 };
 
 const shortcutFuncs = {
+	prevKeyPressed: 0,  // Meaningless value. Doesn't map to anything
+	prevKeyPressedTime: 0, // Meaningless value
 	toggleCaptions: function(v){
 		const validTracks = [];
 		for(let i = 0; i < v.textTracks.length; ++i){
