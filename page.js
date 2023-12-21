@@ -6,7 +6,8 @@ const videoAttribute = "chromeBetterHtml5VideoType",
 let toggleChecked, toggleEnabled, observer, dirVideo, settings = {
 	firstClick:      "focus",
 	dblFullScreen:   true,
-	clickDelay:      0.3,
+	clickDelay:      0.3,  // in seconds
+	clickDelayForTrackSeeking: 1.0,  // in seconds
 	skipNormal:      5,
 	skipShift:       10,
 	skipCtrl:        1,
@@ -19,29 +20,28 @@ let toggleChecked, toggleEnabled, observer, dirVideo, settings = {
 //
 var prevKeyPressed = 0;  // Meaningless initial value.
 var prevKeyPressedTime = 0;  // Meaningless initial value.
-var prevKeyClickCount = 0;  // Used for tracking double/triple key clicks
+var currKeyMultiClickCount = 0;  // Used for tracking double/triple key clicks
 
-function getClickCount(key) {
-	return prevKeyClickCount;
+function getMultiClickCount(key) {
+	return currKeyMultiClickCount;
 }
 
-function recordClickAndGetClickCount(key) {
+function updateMultiClickCount(key) {
 	if (key != prevKeyPressed) {
 		// Reset
         	prevKeyPressed = key;
 		prevKeyPressedTime = Date.now();
-		prevKeyClickCount = 1;
-	} else if (Date.now() - prevKeyPressedTime < settings.clickDelay * 1000) {
+		currKeyMultiClickCount = 1;
+	} else if (Date.now() - prevKeyPressedTime < settings.clickDelayForTrackSeeking * 1000) {
 		// We have a quick subsequent click
 		prevKeyPressedTime = Date.now();
-		prevKeyClickCount = prevKeyClickCount + 1;
+		currKeyMultiClickCount = currKeyMultiClickCount + 1;
 	} else {
 		// Reset
                 prevKeyPressed = key;
 		prevKeyPressedTime = Date.now();
-		prevKeyClickCount = 1;
+		currKeyMultiClickCount = 1;
 	}
-	return prevKeyClickCount;
 }
 //
 // END: THIS IS FOR DOUBLE/TRIPLE CLICKING KEYS
@@ -199,8 +199,8 @@ const shortcutFuncs = {
 	},
 
 	toPercentage: function(v,key){
-		var clickCount = getClickCount(key);
-		var multiClickExtraSkip = v.duration / 100.0 * Math.min(clickCount - 1 , 10.0);
+		var multiClickCount = getMultiClickCount(key);
+		var multiClickExtraSkip = v.duration / 100.0 * Math.min(multiClickCount - 1 , 10.0);
 		if(48 <= key && key <= 57) {
 			// Main keyboard numbers
 			v.currentTime = v.duration * (key - 48) / 10.0 + multiClickExtraSkip;
@@ -353,7 +353,7 @@ function handleKeyDown(e){
 		return true; // Do not activate
 	}
 	const func = keyFuncs[e.keyCode];
-        recordClickAndGetClickCount(e.keyCode);
+        updateMultiClickCount(e.keyCode);
 	if(func){
 		if((func.length < 3 && e.shiftKey) ||
 		   (func.length < 4 && e.ctrlKey)){
