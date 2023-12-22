@@ -27,6 +27,7 @@ function getMultiClickCount(key) {
 }
 
 function updateMultiClickCount(key, shift) {
+        if (key == 16) return; // Ignore shift key
 	if (key != prevKeyPressed) {
 		// Reset
         	prevKeyPressed = key;
