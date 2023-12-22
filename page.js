@@ -203,7 +203,7 @@ const shortcutFuncs = {
 			v.playbackRate = v.defaultPlaybackRate;
 	},
 
-	toPercentage: function(v,key){
+	toPercentage: function(v,key,shift){
 		var multiClickCount = getMultiClickCount(key);
 		var multiClickExtraSkip = v.duration / 100.0 * Math.min(multiClickCount - 1 , 10.0);
 		if(48 <= key && key <= 57) {
