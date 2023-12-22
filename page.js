@@ -26,7 +26,7 @@ function getMultiClickCount(key) {
 	return currKeyMultiClickCount;
 }
 
-function updateMultiClickCount(key) {
+function updateMultiClickCount(key, shift) {
 	if (key != prevKeyPressed) {
 		// Reset
         	prevKeyPressed = key;
@@ -35,7 +35,12 @@ function updateMultiClickCount(key) {
 	} else if (Date.now() - prevKeyPressedTime < settings.clickDelayForTrackSeeking * 1000) {
 		// We have a quick subsequent click
 		prevKeyPressedTime = Date.now();
-		currKeyMultiClickCount = currKeyMultiClickCount + 1;
+		if (shift) {
+			currKeyMultiClickCount = currKeyMultiClickCount - 1;
+			currKeyMultiClickCount = Math.max(1, currKeyMultiClickCount);
+		} else {
+			currKeyMultiClickCount = currKeyMultiClickCount + 1;
+		}
 	} else {
 		// Reset
                 prevKeyPressed = key;
@@ -215,8 +220,6 @@ const keyFuncs = {
 	32 : shortcutFuncs.togglePlay,      // Space
 	75 : shortcutFuncs.togglePlay,      // K
 	35 : shortcutFuncs.toEnd,           // End
-	48 : shortcutFuncs.toStart,         // 0
-	96 : shortcutFuncs.toStart,         // numpad 0
 	36 : shortcutFuncs.toStart,         // Home
 	37 : shortcutFuncs.skipLeft,        // Left arrow
 	74 : shortcutFuncs.skipLeft,        // J
@@ -231,6 +234,7 @@ const keyFuncs = {
 	188: shortcutFuncs.slowOrPrevFrame, // Comma or Less-Than
 	190: shortcutFuncs.fastOrNextFrame, // Period or Greater-Than
 	191: shortcutFuncs.normalSpeed,     // Forward slash or ?
+	48 : shortcutFuncs.toPercentage,    // 0
 	49 : shortcutFuncs.toPercentage,    // 1
 	50 : shortcutFuncs.toPercentage,    // 2
 	51 : shortcutFuncs.toPercentage,    // 3
@@ -240,6 +244,7 @@ const keyFuncs = {
 	55 : shortcutFuncs.toPercentage,    // 7
 	56 : shortcutFuncs.toPercentage,    // 8
 	57 : shortcutFuncs.toPercentage,    // 9
+	96 : shortcutFuncs.toPercentage,    // numpad 0
 	97 : shortcutFuncs.toPercentage,    // numpad 1
 	98 : shortcutFuncs.toPercentage,    // numpad 2
 	99 : shortcutFuncs.toPercentage,    // numpad 3
@@ -353,7 +358,7 @@ function handleKeyDown(e){
 		return true; // Do not activate
 	}
 	const func = keyFuncs[e.keyCode];
-        updateMultiClickCount(e.keyCode);
+        updateMultiClickCount(e.keyCode, e.shiftKey);
 	if(func){
 		if((func.length < 3 && e.shiftKey) ||
 		   (func.length < 4 && e.ctrlKey)){
