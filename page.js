@@ -168,6 +168,28 @@ const shortcutFuncs = {
 		else v.volume = 0;
 	},
 
+        increaseVolMicro: function(v) {
+            if(v.volume == 0) {
+                v.volume = 0.001;
+            } else if (v.volume > 0.2) {
+                // increaseVol(v);
+                if(v.volume <= 0.9) v.volume += 0.1;
+                else v.volume = 1;
+            } else {
+                v.volume = v.volume * 1.1;
+            }
+        },
+
+        decreaseVolMicro: function(v){
+            if(v.volume <= 0.001) {
+                v.volume = 0;
+            } else if(v.volume <= 0.2) {
+                v.volume = v.volume * 0.9;
+            } else {
+                v.volume -= 0.1;
+            }
+        },
+
 	toggleMute: function(v){
 		v.muted = !v.muted;
 	},
@@ -228,6 +250,8 @@ const keyFuncs = {
 	76 : shortcutFuncs.skipRight,       // L
 	38 : shortcutFuncs.increaseVol,     // Up arrow
 	40 : shortcutFuncs.decreaseVol,     // Down arrow
+        81 : shortcutFuncs.decreaseVolMicro,// Q
+        87 : shortcutFuncs.increaseVolMicro,// W
 	77 : shortcutFuncs.toggleMute,      // M
 	70 : shortcutFuncs.toggleFS,        // F
 	67 : shortcutFuncs.toggleCaptions,  // C
