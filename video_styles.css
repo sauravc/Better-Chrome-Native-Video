@@ -1,0 +1,14 @@
+
+video::-webkit-media-controls-panel {
+    background-image: none !important; /* Removes the gradient background */
+    background-color: transparent !important; /* Ensures no solid background color */
+    box-shadow: none !important; /* Removes any applied box-shadow */
+    /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); */
+    text-shadow: 0px 0px 3px black, 0px 0px 4px black, 1px 1px 3px black;;
+}
+
+
+input[pseudo="-webkit-media-controls-timeline" i]::-internal-track-segment-highlight-after {
+    background: light-dark(rgba(0, 0, 0, 0.54), rgba(255, 255, 255, 0.54)) !important;
+}
+
